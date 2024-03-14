@@ -1,7 +1,6 @@
 'use strict';
 const {
-  Model
-} = require('sequelize');
+  Model, Validator } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -26,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       }
-      
     },
     email:{
       type: DataTypes.STRING,
