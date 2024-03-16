@@ -1,13 +1,13 @@
 'use strict';
 
 const { User } = require("../models");
-// import the bcrypt tool to generate hashedpasswords
+
 const bcrypt = require("bcryptjs")
 
-//options package to provide the schema in prod
+
 let options = {};
 if (process.env.NODE_ENV === 'production') {
-  options.schema = process.env.SCHEMA; // define the schema in options
+  options.schema = process.env.SCHEMA;
 }
 
 module.exports = {
