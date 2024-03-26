@@ -1,11 +1,18 @@
 'use strict';
+const { Spot } = require("../models");
 
+const bcrypt = require("bcryptjs")
+
+
+let options = {};
+if (process.env.NODE_ENV === 'production') {
+  options.schema = process.env.SCHEMA;
+}
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    
-
-      await queryInterface.bulkInsert('Spots', [{
+      await Spot.bulkCreate([
+        {
         address: '123 Apple St.',
         city:'Yakima',
         state:'WA',
