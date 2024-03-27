@@ -2,7 +2,7 @@
 const {
   Model
 } = require('sequelize');
-const Users = require('../models')
+const User = require('../models')
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -11,12 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      Spot.belongsTo(models.User,{foreignKey:'owner_id'});
     }
   }
   Spot.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true
+    },
+    owner_id: {
+      type: DataTypes.INTEGER,
     },
     address: {
       type: DataTypes.STRING,
