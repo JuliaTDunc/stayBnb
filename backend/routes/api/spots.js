@@ -11,7 +11,8 @@ router.get('/', async(req,res)=>{
 router.post('/', async(req,res) => {
     const {owner_id, address, city, state, country, lat, lng, name, description, price,} = req.query;
 
-    
+    //create validate checker for attributes
+
 })
 
 module.exports = router;
