@@ -8,5 +8,10 @@ router.get('/', async(req,res)=>{
 
     return res.json(spots)
 });
+router.post('/', async(req,res) => {
+    const {owner_id, address, city, state, country, lat, lng, name, description, price,} = req.query;
+
+    
+})
 
 module.exports = router;
