@@ -11,10 +11,16 @@ router.get('/', async(req,res)=>{
 router.post('/', async(req,res) => {
     const {owner_id, address, city, state, country, lat, lng, name, description, price,} = req.query;
     if (address && city && state && country && name && description && price){
-    const newSpot = new Spot({
-       Spot.address = address;
+    const newSpot = await (bulkCreate, Spot){
+       newSpot.address = address,
+       newSpot.city = city,
+       newSpot.state = state,
+       newSpot.country = country,
+       newSpot.name = name,
+       newSpot.description = description,
+       newSpot.price = price
 
-    })
+    }
 }
     //session cookies
 
