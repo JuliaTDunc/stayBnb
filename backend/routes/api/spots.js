@@ -10,8 +10,13 @@ router.get('/', async(req,res)=>{
 });
 router.post('/', async(req,res) => {
     const {owner_id, address, city, state, country, lat, lng, name, description, price,} = req.query;
+    if (address && city && state && country && name && description && price){
+    const newSpot = new Spot({
+       Spot.address = address;
 
-    //create validate checker for attributes
+    })
+}
+    //session cookies
 
 })
 
