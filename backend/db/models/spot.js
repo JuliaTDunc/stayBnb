@@ -2,7 +2,8 @@
 const {
   Model
 } = require('sequelize');
-const User = require('../models')
+const {Review} = require('../models')
+//const User = require('../models')
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -12,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Spot.belongsTo(models.User,{foreignKey:'owner_id'});
+      Spot.hasMany(models.Review)
     }
   }
   Spot.init({
