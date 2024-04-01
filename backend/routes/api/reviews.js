@@ -67,7 +67,7 @@ router.post('/:reviewId/images', async (req,res) => {
   }
 });
 //Get all reviews of the current user
-router.get('/user', async (req,res) => {
+router.get('/session', async (req,res) => {
   try{
     const userId = req.userId;
     const userReviews = await Review.findAll({
