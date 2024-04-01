@@ -1,123 +1,181 @@
-/*All endpoints that require a current user to be logged in.
-
-* Request: endpoints that require authentication
-* Error Response: Require authentication
-  * Status Code: 401
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "message": "Authentication required"
+const express = require('express');
+const router = express.Router();
+const {Review, User, Spot, ReviewImage} = require('../../db/models');
+//Create new review based on spotId
+router.post('/:spotId', async (req,res) => {
+  try{
+    const {userId, review, stars} = req.body;
+    const spotId = req.params.spotId;
+    const spot = await Spot.findByPk(spotId);
+    if(!spot){
+      return res._construct(404).json({error: 'Spot not found'});
     }
-    ```
-
-### All endpoints that require proper authorization
-
-All endpoints that require authentication and the current user does not have the
-correct role(s) or permission(s).
-
-* Request: endpoints that require proper authorization
-* Error Response: Require proper authorization
-  * Status Code: 403
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "message": "Forbidden"
-    }
-    ```
-### Get the Current User
-
-Returns the information about the current user that is logged in.
-
-* Require Authentication: false
-* Request
-  * Method: GET
-  * URL: '/api/session'
-  * Body: none
-
-* Successful Response when there is a logged in user
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "user": {
-        "id": 1,
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "john.smith@gmail.com",
-        "username": "JohnSmith"
+    const existing = await Review.findOne({
+      where: {
+        userId,
+        spotId
       }
+    });
+    if(existing){
+      return res.status(403).json({error: 'Review already exists for this spot'})
     }
-    ```
 
-* Successful Response when there is no logged in user
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "user": null
+    const newReview = await Review.create({
+      userId,
+      spotId,
+      review,
+      stars
+    });
+    res.status(201).json(newReview)
+  } catch (error){
+    console.error('Error creating review', error);
+    if(error.name === 'SequelizeValidationError'){
+      return res.status(400).json({error: error.message});
     }
-    ```
-
-### Log In a User
-
-Logs in a current user with valid credentials and returns the current user's
-information.
-
-* Require Authentication: false
-* Request
-  * Method: POST
-  * URL: '/api/session'
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "credential": "john.smith@gmail.com",
-      "password": "secret password"
+    res.status(500).json({error: 'Internal Server Error'})
+  }
+});
+//Add an image to a review based on reviewId
+router.post('/:reviewId/images', async (req,res) => {
+  try{
+    const {userId, url} = req.body;
+    const reviewId = req.params.reviewId;
+    const review = await Review.findByPk(reviewId);
+    if(!review){
+      return res.status(404).json({error: 'Review Not Found'})
     }
-    ```
-
-* Successful Response
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "user": {
-        "id": 1,
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "john.smith@gmail.com",
-        "username": "JohnSmith"
+    if(userId !== review.userId){
+      return res.status(403).json({error: 'Not authorized'})
+    }
+    const reviewImagesCount = await ReviewImage.count({
+      where: {
+        reviewId
       }
+    });
+    const maxImages = 3;
+    if(reviewImagesCount >= maxImages){
+      return res.status(403).json({error: 'Max number of images'})
     }
-    ```
-
-* Error Response: Invalid credentials
-  * Status Code: 401
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "message": "Invalid credentials"
+    const newImage = await ReviewImage.create({
+      reviewId,
+      url
+    });
+    res.status(201).json(newImage);
+  } catch (error){
+    console.error('Image could not be added', error);
+    res.status(500).json({error: 'Internal Server Error'})
+  }
+});
+//Get all reviews of the current user
+router.get('/user', async (req,res) => {
+  try{
+    const userId = req.userId;
+    const userReviews = await Review.findAll({
+      where: {userId},
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName']
+        },
+        {
+          model: Spot,
+          attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng'],
+          include: [
+            {
+              model: User,
+              as: 'Owner',
+              attributes: ['id', 'firstName', 'lastName']
+            },
+            {
+              model: ReviewImage,
+              attributes: ['id', 'url']
+            }
+          ]
+        },
+        {
+        model: ReviewImage,
+        attributes: ['id', 'url']
+        }
+      ],
+      attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt']
+    });
+    res.json(userReviews)
+  } catch(error){
+    console.error('Error finding user reviews', error);
+    res.status(500).json({error: 'Internal Server Error'})
+  }
+});
+//Get all reviews by a spots id
+router.get('/spot/:spotId', async(req,res)=> {
+  try{
+    const spotId = req.params.spotId;
+    const spot = await Spot.findByPk(spotId);
+    if(!spot){
+      return res.status(404).json({error: 'Spot not found'})
     }
-    ```
+    const spotReviews = await Review.findAll({
+      where: {spotId},
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName']
+        },
+        {
+          model: ReviewImage,
+          attributes: ['id', 'url']
+        }
+      ],
+      attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt']
+    });
+    res.json(spotReviews)
+  } catch (error){
+    console.error('Error finding reviews', error);
+    return res.status(500).json({error: 'Internal Server Error'})
+  }
+});
+//Edit a review
+router.put('/:reviewId', async (req,res) => {
+  try{
+    const {userId, review, stars} = req.body;
+    const reviewId = req.params.reviewId;
 
-* Error response: Body validation error*/
+    const existing = await Review.findByPk(reviewId);
+    if(!existing){
+      return res.status(404).json({error: 'Review not found'})
+    }
+    if(userId !== existing.userId){
+      return res.status(403).json({error: 'Not authorized'})
+    }
+
+    existing.review = review;
+    existing.stars = stars;
+    await existing.save();
+    res.json(existing)
+  } catch (error){
+    console.error('Error edititng', error);
+    if(error.name === 'SequelizeValidationError'){
+      return res.status(400).json({error: error.message})
+    }
+    res.status(500).json({error: 'Internal Server Error'})
+  }
+});
+//Delete a review
+router.delete('/:reviewId', async(req,res) => {
+  try{
+    const userId = req.userId;
+    const reviewId = req.params.reviewId;
+    const existing = await Review.findByPk(reviewId);
+    if(!existing){
+      return res.status(404).json({error: 'Review not found'});
+    }
+    if(userId !== existing.userId){
+      return res.status(403).json({error: 'Not authorized'})
+    }
+    await existing.destroy();
+    res.json({message: 'Review Deleted'})
+  }catch (errors){
+    console.error('Error deleting review ', error);
+    res.status(500).json({error: 'Internal Server Error'});
+  }
+});
+module.exports = router;
