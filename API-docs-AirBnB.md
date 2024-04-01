@@ -285,7 +285,7 @@ Returns all the spots owned (created) by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: '/api/spots/current'
+  * URL: '/api/spots/session'
   * Body: none
 
 * Successful Response
@@ -632,7 +632,7 @@ Returns all the reviews written by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: '/api/reviews/current'
+  * URL: '/api/reviews/session'
   * Body: none
 
 * Successful Response
@@ -688,7 +688,7 @@ Returns all the reviews that belong to a spot specified by id.
 * Require Authentication: false
 * Request
   * Method: GET
-  * URL: '/api/spots/:spotId/reviews' //*
+  * URL: '/api/reviews/spots/:spotId'
   * Body: none
 
 * Successful Response
@@ -743,7 +743,7 @@ Create and return a new review for a spot specified by id.
 * Require Authentication: true
 * Request
   * Method: POST
-  * URL: '/api/spots/:spotId/reviews'
+  * URL: '/api/reviews/spot/:spotId'
   * Headers:
     * Content-Type: application/json
   * Body:
