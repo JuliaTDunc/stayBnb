@@ -1,7 +1,8 @@
 
 const express = require('express')
 const router = express.Router();
-const {Spot, User, Review, SpotImage, sequelize, Sequelize} = require('../../db/models')
+const { restoreUser } = require('../../utils/auth');
+const {Spot, User, Review, SpotImage, sequelize, Sequelize} = require('../../db/models');
 //Get all the spots
 router.get('/', async(req,res)=>{
     const spots = await Spot.findAll({
@@ -9,10 +10,10 @@ router.get('/', async(req,res)=>{
             {model: sequelize.models.User, attributes: ['id', 'firstName', 'lastName',]},
             {model: sequelize.models.Review, attributes: [[sequelize.fn('avg', sequelize.col('stars')), 'avgRating']], required: false}
         ],
-        attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price','createdAt', 'updatedAt', 'preview_image' ,]
+        attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price','createdAt', 'updatedAt', 'preview_image',]
     })
 
-    return res.json({ Spots: spots });
+    return res.json(spots);
 
 });
 //Create a spot
@@ -51,7 +52,7 @@ router.post('/:spotId/images', async (req, res) => {
             return res.status(404).json({error: 'Spot not found'});
         }
         if (spot.ownerId !== userId){
-            return res.status(403).json({error: 'Not authorized'});
+            return res.status(403).json({error: 'Forbidden'});
         }
         const {url, preview} = req.body;
         const image = await SpotImage.create({url, preview, spotId});
@@ -67,7 +68,7 @@ router.post('/:spotId/images', async (req, res) => {
     }
 });
 //Get all spots owned by the current user
-router.get('/session', async (req,res) => {
+router.get('/session', restoreUser, async (req,res) => {
     try{
         const userId = req.user.id;
         const spots = await Spots.findAll({
@@ -127,7 +128,7 @@ router.put('/:spotid', async(req,res)=> {
             return res.status(404).json({error: 'Spot not found'})
         }
         if(spot.ownerId !== userId){
-            return res.status(404).json({error:'Not authorized'})
+            return res.status(404).json({error:'Forbidden'})
         }
 
         spot.address = req.body.address;
@@ -158,7 +159,7 @@ router.delete('/:spotId', async(req,res) => {
             return res.status(404).json({error: 'Spot not found'})
         }
         if(spot.ownerId !== userId){
-            return res.status(403).json({error: 'Not authorized'})
+            return res.status(403).json({error: 'Forbidden'})
         }
         await spot.destroy();
         res.json({message: 'Spot deleted'})

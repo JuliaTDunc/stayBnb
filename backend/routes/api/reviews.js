@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const {Review, User, Spot, ReviewImage} = require('../../db/models');
+const { restoreUser } = require('../../utils/auth');
 //Create new review based on spotId
-router.post('/:spotId', async (req,res) => {
+router.post('/spots/:spotId', async (req,res) => {
   try{
     const {userId, review, stars} = req.body;
     const spotId = req.params.spotId;
@@ -45,7 +46,7 @@ router.post('/:reviewId/images', async (req,res) => {
       return res.status(404).json({error: 'Review Not Found'})
     }
     if(userId !== review.userId){
-      return res.status(403).json({error: 'Not authorized'})
+      return res.status(403).json({error: 'Forbidden'})
     }
     const reviewImagesCount = await ReviewImage.count({
       where: {
@@ -67,7 +68,7 @@ router.post('/:reviewId/images', async (req,res) => {
   }
 });
 //Get all reviews of the current user
-router.get('/session', async (req,res) => {
+router.get('/session', restoreUser, async (req,res) => {
   try{
     const userId = req.userId;
     const userReviews = await Review.findAll({
@@ -106,7 +107,7 @@ router.get('/session', async (req,res) => {
   }
 });
 //Get all reviews by a spots id
-router.get('/spot/:spotId', async(req,res)=> {
+router.get('/spots/:spotId', async(req,res)=> {
   try{
     const spotId = req.params.spotId;
     const spot = await Spot.findByPk(spotId);
@@ -144,7 +145,7 @@ router.put('/:reviewId', async (req,res) => {
       return res.status(404).json({error: 'Review not found'})
     }
     if(userId !== existing.userId){
-      return res.status(403).json({error: 'Not authorized'})
+      return res.status(403).json({error: 'Forbidden'})
     }
 
     existing.review = review;
@@ -169,7 +170,7 @@ router.delete('/:reviewId', async(req,res) => {
       return res.status(404).json({error: 'Review not found'});
     }
     if(userId !== existing.userId){
-      return res.status(403).json({error: 'Not authorized'})
+      return res.status(403).json({error: 'Forbidden'})
     }
     await existing.destroy();
     res.json({message: 'Review Deleted'})
