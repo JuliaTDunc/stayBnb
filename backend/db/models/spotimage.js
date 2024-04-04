@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    preview: {
+      type: DataTypes.BOOLEAN,
+    }
   }, {
     sequelize,
     modelName: 'spotImage',

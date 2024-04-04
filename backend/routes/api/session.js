@@ -20,7 +20,7 @@ const validateLogin = [
     handleValidationErrors
 ];
 
-router.post(
+/*router.post(
     '/',
     async (req, res, next) => {
         const { credential, password } = req.body;
@@ -54,7 +54,7 @@ router.post(
             user: safeUser
         });
     }
-);
+);*/
 router.get(
     '/',
     (req, res) => {

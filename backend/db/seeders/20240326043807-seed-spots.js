@@ -13,6 +13,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
       await Spot.bulkCreate([
         {
+        owner_id: 1,
         address: '123 Apple St.',
         city:'Yakima',
         state:'WA',
@@ -25,6 +26,7 @@ module.exports = {
         preview_image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV3NCoiLwmh0s5NQFtQDnZ4-1JnAVnziJnNyQT8waGyCy3L6pN9SgP0tcvDyzqOQa6MpQ&usqp=CAU'
       },
     {
+      owner_id: 2,
       address:'456 Cherry Lane',
       city:'Walla Walla',
       state:'WA',
@@ -37,6 +39,7 @@ module.exports = {
       preview_image:'https://northernarizonacabinrentals.com/wp-content/uploads/2021/06/1-no-phone.jpg',
     },
         {
+          owner_id: 3,
           address:'789 Greenwood St',
           city:'Puyallup',
           state:'WA',

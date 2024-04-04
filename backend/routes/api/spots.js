@@ -7,14 +7,16 @@ const {Spot, User, Review, SpotImage, sequelize, Sequelize} = require('../../db/
 router.get('/', async(req,res)=>{
     const spots = await Spot.findAll({
         include: [
-            {model: sequelize.models.User, attributes: ['id', 'firstName', 'lastName',]},
-            {model: sequelize.models.Review, attributes: [[sequelize.fn('avg', sequelize.col('stars')), 'avgRating']], required: false}
+            {model: User,
+                 attributes: ['id', 'firstName', 'lastName',]},
+            {model: Review,
+                // attributes: [[sequelize.fn('avg', sequelize.col('stars')), 'avgRating']], required: true
+            }
         ],
-        attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price','createdAt', 'updatedAt', 'preview_image',]
+        attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price','createdAt', 'updatedAt', 'preview_image',],
+      
     })
-
     return res.json(spots);
-
 });
 //Create a spot
 router.post('/', async(req,res) => {
@@ -42,7 +44,7 @@ router.post('/', async(req,res) => {
     }
 });
 //Add an Image to a Spot based on the Spot's id
-router.post('/:spotId/images', async (req, res) => {
+router.post('/:spotId/images', restoreUser, async (req, res) => {
     try{
         const spotId = req.params.spotId;
         const userId = req.user.id;
@@ -83,18 +85,17 @@ router.get('/session', restoreUser, async (req,res) => {
     }
 });
 //Get details from a Spot from an id
-router.get('/:spotId', async(req,res) => {
-    try{
+/*router.get('/:spotId', async(req,res) => {
+    
         const spotId = req.params.spotId;
         const spot = await Spot.findByPk(spotId,{
-            include: [
+             include: [
                 {
-                    model: Review,
-                    attributes: [
-                        [Sequelize.fn('COUNT', Sequelize.col('*')), 'numReviews'],
-                        [Sequelize.fn('AVG', Sequelize.col('stars')), 'avgStarRating']
-                    ],
-                    raw: true
+                     model: Review,
+                     attributes: [
+                      [Sequelize.fn('COUNT', Sequelize.col('*')), 'numReviews'],
+                         [Sequelize.fn('AVG', Sequelize.col('stars')), 'avgStarRating']
+                     ],
                 },
                 {
                     model: SpotImage,
@@ -105,22 +106,42 @@ router.get('/:spotId', async(req,res) => {
                     as: 'Owner',
                     attributes: ['id', 'firstName', 'lastName']
                 }
-            ],
-            raw: true
-        });
-        if(!spot){
+            ]
+        }
+    );
+
+      /*  if(!spot){
             return res.status(404).json({error: 'Spot not found'});
         }
         res.json(spot);
-    } catch (error){
+    
+    catch (error){
         console.error('Error fetching spot details:', error);
         res.status(500).json({error: 'Internal server error'})
     }
+    return res.json(spot);
 });
+*/
+router.get("/:spotId", async (req, res, next) => {
+    const { spotId } = req.params
+  
+        const spots = await Spot.findByPk(spotId, {
+            include: [
+                { model: sequelize.models.User, attributes: ['id', 'firstName', 'lastName',] },
+                { model: sequelize.models.Review, attributes: [[sequelize.fn('avg', sequelize.col('stars')), 'avgRating']], required: false }
+            ],
+            attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt', 'preview_image',],
+        })
+    
+
+    return res.json(
+        spots
+    )
+})
 //Edit a spot
-router.put('/:spotid', async(req,res)=> {
+router.put('/:spotId', restoreUser, async(req,res)=> {
     try{
-        const spotId = req.params.id;
+        const spotId = req.params.spotId;
         const userId = req.user.id;
 
         const spot = await Spot.findByPk(spotId);
@@ -149,7 +170,7 @@ router.put('/:spotid', async(req,res)=> {
     }
 });
 //Delete a spot
-router.delete('/:spotId', async(req,res) => {
+router.delete('/:spotId', restoreUser, async(req,res) => {
     try{
         const spotId = req.params.spotId;
         const userId = req.user.id;

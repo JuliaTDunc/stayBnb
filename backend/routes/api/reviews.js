@@ -3,7 +3,7 @@ const router = express.Router();
 const {Review, User, Spot, ReviewImage} = require('../../db/models');
 const { restoreUser } = require('../../utils/auth');
 //Create new review based on spotId
-router.post('/spots/:spotId', async (req,res) => {
+router.post('/spots/:spotId', restoreUser, async (req,res) => {
   try{
     const {userId, review, stars} = req.body;
     const spotId = req.params.spotId;
@@ -37,7 +37,7 @@ router.post('/spots/:spotId', async (req,res) => {
   }
 });
 //Add an image to a review based on reviewId
-router.post('/:reviewId/images', async (req,res) => {
+router.post('/:reviewId/images', restoreUser, async (req,res) => {
   try{
     const {userId, url} = req.body;
     const reviewId = req.params.reviewId;
@@ -121,10 +121,10 @@ router.get('/spots/:spotId', async(req,res)=> {
           model: User,
           attributes: ['id', 'firstName', 'lastName']
         },
-        {
+        /*{
           model: ReviewImage,
-          attributes: ['id', 'url']
-        }
+        attributes: ['id', 'url']
+        }*/
       ],
       attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt']
     });
@@ -135,7 +135,7 @@ router.get('/spots/:spotId', async(req,res)=> {
   }
 });
 //Edit a review
-router.put('/:reviewId', async (req,res) => {
+router.put('/:reviewId', restoreUser, async (req,res) => {
   try{
     const {userId, review, stars} = req.body;
     const reviewId = req.params.reviewId;
@@ -161,7 +161,7 @@ router.put('/:reviewId', async (req,res) => {
   }
 });
 //Delete a review
-router.delete('/:reviewId', async(req,res) => {
+router.delete('/:reviewId', restoreUser, async(req,res) => {
   try{
     const userId = req.userId;
     const reviewId = req.params.reviewId;
