@@ -1,8 +1,13 @@
 
 const express = require('express')
 const router = express.Router();
-const { restoreUser } = require('../../utils/auth');
+const { restoreUser, requireAuth } = require('../../utils/auth');
 const {Spot, User, Review, SpotImage, sequelize, Sequelize} = require('../../db/models');
+
+router.get('/test', function (req, res) {
+    res.json('hello world' );
+});
+
 //Get all the spots
 router.get('/', async(req,res)=>{
     const {page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice, maxPrice} = req.query.params;
@@ -25,7 +30,7 @@ router.get('/', async(req,res)=>{
     }
 });
 //Create a spot
-router.post('/', async(req,res) => {
+router.post('/', requireAuth, async(req,res) => {
     try{
     const {address, city, state, country, lat, lng, name, description, price } = req.body; 
 
