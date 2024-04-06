@@ -11,7 +11,7 @@ module.exports = {
     await queryInterface.addColumn(options, 'firstName', {
       allowNull: false,
       type: Sequelize.STRING,
-    });
+    }, options);
 
     await queryInterface.addColumn(options, 'lastName', {
       allowNull: false,
@@ -22,6 +22,5 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn(options, 'firstName');
     await queryInterface.removeColumn(options, 'lastName');
-    
   }    
 };
