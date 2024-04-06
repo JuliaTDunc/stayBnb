@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {Review, User, Spot, ReviewImage} = require('../../db/models');
-const { restoreUser } = require('../../utils/auth');
+const { restoreUser, requireAuth } = require('../../utils/auth');
 //Create new review based on spotId
 router.post('/spots/:spotId', restoreUser, async (req,res) => {
   try{
@@ -177,6 +177,25 @@ router.delete('/:reviewId', restoreUser, async(req,res) => {
   }catch (errors){
     console.error('Error deleting review ', error);
     res.status(500).json({error: 'Internal Server Error'});
+  }
+});
+//Delete a review image
+router.delete('/:reviewId/images/:imageId', requireAuth, async(req,res)=>{
+  const {reviewId, imageId} = req.query.params;
+  const userId = req.user.id;
+  try{
+    const review = await Review.findByPk(reviewId);
+    if(!review){
+      return res.status(404).json({message: "Review couldn't be found"})
+    }
+    if(review.userId !== userId){
+      return res.status(403).json({message: 'Not authorized'})
+    }
+    await image.destroy();
+    res.status(200).json({message: 'Successfully deleted'})
+  }catch(error){
+    console.error('Error deleting review image ', error);
+    res.status(500).json({error: 'Internal Server Error'})
   }
 });
 module.exports = router;
