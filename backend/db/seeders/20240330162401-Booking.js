@@ -30,13 +30,16 @@ module.exports = {
         startDate: new Date(),
         endDate: new Date(),
       }
-    ], {});
+      ], { validate: true, returning: false });
     
   },
 
   async down (queryInterface, Sequelize) {
-  
-     await queryInterface.bulkDelete('Bookings', null, {});
+  options.tableName = 'Bookings';
+    const Op = Sequelize.Op;
+     await queryInterface.bulkDelete(options, {
+      spotId: {[Op.in]: [1,2,3]}
+     }, {});
      
   }
 };

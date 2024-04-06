@@ -23,7 +23,7 @@ module.exports = {
         name:'The Apple House',
         description:'small 2 bedroom apple house',
         price:150,
-        preview_image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV3NCoiLwmh0s5NQFtQDnZ4-1JnAVnziJnNyQT8waGyCy3L6pN9SgP0tcvDyzqOQa6MpQ&usqp=CAU'
+       
       },
     {
       owner_id: 2,
@@ -36,7 +36,6 @@ module.exports = {
       name:'Cherry Cottage',
       description:'3bd 2bth cottage',
       price:250,
-      preview_image:'https://northernarizonacabinrentals.com/wp-content/uploads/2021/06/1-no-phone.jpg',
     },
         {
           owner_id: 3,
@@ -49,15 +48,17 @@ module.exports = {
           name:'The Greenwood House',
           description:'large 4bd 3bth oak house',
           price:275,
-          preview_image:'https://cdn.shopify.com/s/files/1/1624/7461/files/Log-Home-Pros-and-cons_600x600.jpg?v=1643646621',
+          
 }
-], {});
+], {validate: true});
   
   },
 
   async down (queryInterface, Sequelize) {
-    
-     await queryInterface.bulkDelete('Spots', null, {});
-     
+    options.tableName = 'Spots';
+    const Op = Sequelize.Op;
+     await queryInterface.bulkDelete(options, {
+       name: { [Op.in]: ['The Apple House','Cherry Cottage','The Greenwood House'] }
+     }, {});
   }
 };

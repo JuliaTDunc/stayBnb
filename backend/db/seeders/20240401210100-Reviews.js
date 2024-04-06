@@ -24,11 +24,16 @@ module.exports = {
       review: 'This house is haunted, do not go',
       stars: 2
     }
-  ], {});
+  ], {validate: true, returning: false});
     
   },
 
   async down (queryInterface, Sequelize) {
-     await queryInterface.bulkDelete('Reviews', null, {}); 
+    options.tableName = 'Reviews';
+    const Op = Sequelize.Op;
+     await queryInterface.bulkDelete(options,{
+      spotId: {[Op.in]: [1,2,3]}
+     }, {}); 
+
   }
 };
