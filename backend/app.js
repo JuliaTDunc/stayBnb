@@ -40,8 +40,6 @@ app.use(
 );
 
 app.use(routes);
-app.use('/spots', require('./routes/api/spots'));
-//other routes here
 
 
 
