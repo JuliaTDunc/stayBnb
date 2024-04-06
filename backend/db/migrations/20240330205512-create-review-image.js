@@ -1,6 +1,9 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
-
+let options = {};
+if (process.env.NODE_ENV === 'production') {
+  options.schema = process.env.SCHEMA; //defines the schema in the options object
+}
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('reviewImages', {
@@ -26,9 +29,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }, options);
   },
   async down(queryInterface, Sequelize) {
+    options.tableName = 'reviewImages'
     await queryInterface.dropTable('reviewImages');
   }
 };

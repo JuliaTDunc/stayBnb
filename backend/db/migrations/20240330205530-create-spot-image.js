@@ -1,6 +1,10 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
-const spotImage = require('../models')
+
+let options = {};
+if (process.env.NODE_ENV === 'production') {
+  options.schema = process.env.SCHEMA; //defines the schema in the options object
+}
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('spotImages', {
@@ -24,9 +28,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }, options);
   },
   async down(queryInterface, Sequelize) {
+    options.tableName = 'spotImages'
     await queryInterface.dropTable('spotImages');
   }
 };
