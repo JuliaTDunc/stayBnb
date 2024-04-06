@@ -2,11 +2,8 @@
 const express = require('express')
 const router = express.Router();
 const { restoreUser, requireAuth } = require('../../utils/auth');
-const {Spot, User, Review, SpotImage, sequelize, Sequelize} = require('../../db/models');
+const {Spot, User, SpotImage, sequelize, Sequelize} = require('../../db/models');
 
-router.get('/test', function (req, res) {
-    res.json('hello world' );
-});
 
 //Get all the spots
 router.get('/', async(req,res)=>{

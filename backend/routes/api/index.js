@@ -6,7 +6,9 @@ const spotsRouter = require('./spots.js');
 const bookingsRouter = require('./bookings.js');
 const reviewsRouter = require('./reviews.js')
 
+
 const  {restoreUser}  = require("../../utils/auth.js");
+const { User } = require('../../db/models');
 
 router.use(restoreUser);
 
