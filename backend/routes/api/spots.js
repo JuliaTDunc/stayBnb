@@ -142,12 +142,12 @@ function getAvgAndImage(findAll) {
         }
         delete toJson.Reviews
 
-        if (toJson.SpotImages[0]) {
-            toJson.previewImage = toJson.SpotImages[0].url;
+        if (toJson.spotImages[0]) {
+            toJson.previewImage = toJson.spotImages[0].url;
         } else {
             toJson.previewImage = null;
         }
-        delete toJson.SpotImages
+        delete toJson.spotImages
         return toJson
     })
     return spots
@@ -233,7 +233,7 @@ router.get("/", async (req, res, next) => {
             attributes: ['stars'],
         },
         {
-            model: SpotImages,
+            model: spotImages,
             required: false,
             where: {
                 previewImage: true
