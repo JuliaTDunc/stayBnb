@@ -21,9 +21,23 @@ router.get('/', async(req,res)=>{
     }
     try{
     const filters = {};
-   // if(minLat &&)
+    if(minLat && maxLat) filters.lat = {[Op.between]: [minLat, maxLat]};
+    if(minLng && maxLng) filters.lng = {[Op.between]: [minLng, maxLng]};
+    if(minPrice && maxPrice) filters.price = {[Op.between]: [minPrice, maxPrice]};
+    const spots = await Spot.findAll({
+        where: filters,
+        include: [
+            {model: User, attributes: ['id', 'firstName', 'lastName']},
+            {model: Review}
+        ],
+        attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt'],
+        offset: (page - 1) * size,
+        limit: size
+    });
+    return res.json({Spots: spots, page: parseInt(page), size: parseInt(size)})
     } catch(error){
-        
+        console.error('Error fetching spots', error);
+        return res.status(500).json({error: 'Internal Server Error'})
     }
 });
 //Create a spot
@@ -138,7 +152,7 @@ router.get("/:spotId", async (req, res, next) => {
                 { model: sequelize.models.User, attributes: ['id', 'firstName', 'lastName',] },
                 { model: sequelize.models.Review, attributes: [[sequelize.fn('avg', sequelize.col('stars')), 'avgRating']], required: false }
             ],
-            attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt', 'preview_image',],
+            attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt'],
         })
     
 
