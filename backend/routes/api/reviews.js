@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {Review, User, Spot, ReviewImage} = require('../../db/models');
 const { restoreUser, requireAuth } = require('../../utils/auth');
+
+
 //Create new review based on spotId
 router.post('/spots/:spotId', restoreUser, async (req,res) => {
   try{
