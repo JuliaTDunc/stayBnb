@@ -4,7 +4,8 @@ const router = express.Router();
 const {Op, Sequelize, DATE} = require('sequelize')
 const { restoreUser, requireAuth } = require('../../utils/auth');
 const {Spot, Review, User, reviewImage, spotImage, Booking} = require('../../db/models');
-const {handleValidationErrors} = require('../../utils/validation')
+const {handleValidationErrors} = require('../../utils/validation');
+const {check} = require('express-validator');
 
 //Get all the spots
 /*router.get('/', async(req,res)=>{
