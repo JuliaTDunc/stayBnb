@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 const { Spot, User, Booking } = require('../../db/models');
-const {restoreUser} = require('../../utils/auth');
+const {restoreUser, requireAuth} = require('../../utils/auth');
 
 //Get all of the current users bookings
 router.get('/session', restoreUser, async (req,res) => {
