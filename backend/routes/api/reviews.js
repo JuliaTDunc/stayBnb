@@ -82,7 +82,7 @@ router.get('/session', restoreUser, async (req,res) => {
         },
         {
           model: Spot,
-          attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng'],
+          attributes: ['id', 'owner_id', 'address', 'city', 'state', 'country', 'lat', 'lng'],
           include: [
             {
               model: User,

@@ -80,7 +80,7 @@ router.delete('/:bookingId', requireAuth, async(req,res) => {
         }
         if(booking.userId !== userId){
             const spot = await Spot.findByPk(booking.spotId);
-            if(!spot || spot.ownerId !== userId){
+            if(!spot || spot.owner_id !== userId){
                 return res.status(403).json({message: "Not authorized"})
             }
         }

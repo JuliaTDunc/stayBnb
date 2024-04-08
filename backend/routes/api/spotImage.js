@@ -49,7 +49,7 @@ router.delete("/:imageId", requireAuth, async (req, res, next) => {
     })
 
     let spot = await Spot.findByPk(image.spotId)
-    if (spot.ownerId != req.user.id) return res.status(400).json({
+    if (spot.owner_id != req.user.id) return res.status(400).json({
         message: "Booking couldn't be found"
     })
 
