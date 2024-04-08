@@ -6,7 +6,7 @@ const { restoreUser, requireAuth } = require('../../utils/auth');
 const {Spot, Review, User, reviewImage, spotImage, Booking} = require('../../db/models');
 const {handleValidationErrors} = require('../../utils/validation');
 const {check} = require('express-validator');
-
+ownerId
 //Get all the spots
 /*router.get('/', async(req,res)=>{
     const {page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice, maxPrice} = req.query.params;
@@ -261,10 +261,11 @@ router.get("/", async (req, res, next) => {
 //Create a spot
 router.post('/', requireAuth, validateSpot, async(req,res, next) => {
     const ownerId = req.user.id
+    const owner_id = ownerId
     const { address, city, state, country, lat, lng, name, description, price } = req.body; 
     try{
     const spot = await Spot.create({
-        ownerId,
+        owner_id,
         address,
         city,
         state,
@@ -297,7 +298,7 @@ router.post('/:spotId/images', requireAuth, restoreUser, async (req, res, next) 
         if(spot === null) {
             return res.status(404).json({message: 'Spot could not be found'});
         }
-        if (spot.ownerId !== req.user.id){
+        if (spot.owner_id !== req.user.id){
             return res.status(403).json({message: 'Forbidden'});
         }
         const image = (await spotImage.create({url, previewImage})).toJSON();
@@ -314,7 +315,7 @@ router.post('/:spotId/images', requireAuth, restoreUser, async (req, res, next) 
 router.get('/session', requireAuth, async (req,res, next) => {
         const noAvg = await Spots.findAll({
         where:{
-                ownerId: req.user.id
+                owner_id: req.user.id
             },
             include: [{
                 model: Review,
@@ -381,7 +382,7 @@ router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
             }
             return next(err)
         }
-        if (spot.ownerId !== ownerId) {
+        if (spot.owner_id !== ownerId) {
             const err = new Error(`Spot couldn't be found`);
             err.status = 400;
             err.body = {
@@ -399,7 +400,7 @@ router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
 
         res.json(spot)
 
-    } catch (err) {
+    } catch(err) {
         return next(err)
     }
 });
@@ -417,7 +418,7 @@ router.delete('/:spotId', requireAuth, async(req,res,next) => {
             }
             return next(err)
         }
-        if(spot.ownerId !== ownerId){
+        if(spot.owner_id !== ownerId){
             const err = new Error(`Spot could not be found`);
             err.status = 400;
             err.body = {
@@ -441,7 +442,7 @@ router.get('/:spotId/booking', requireAuth, async (req, res, next) => {
         if (!spot) {
             return res.status(404).json({ message: 'Spot could not be found' })
         }
-        if (spot.ownerId === req.user.id) {
+        if (spot.owner_id === req.user.id) {
             const bookings = await Booking.findAll({
                 where: { spotId: req.params.spotId },
                 include: [{ model: User, required: false, attributes: ['id', 'firstName', 'lastName'] }]
@@ -463,7 +464,7 @@ router.post('/:spotId/booking', requireAuth, async (req, res, next) => {
         if (!spot) {
             return res.status(404).json({ message: "Spot couldn't be found" })
         }
-        if (spot.ownerId === userId) {
+        if (spot.owner_id === userId) {
             return res.json(403).json({ message: "You cannot book your own spot" })
         }
 
