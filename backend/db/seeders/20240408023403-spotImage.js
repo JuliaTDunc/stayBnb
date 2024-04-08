@@ -8,11 +8,11 @@ if (process.env.NODE_ENV === 'production') {
 module.exports = {
   async up (queryInterface, Sequelize) {
     await spotImage.bulkCreate([
-      {
+      /*{
         spot_id: 1,
         url: 'imagefirstspot.com',
         previewImage: true
-      },
+      },*/
       {
         spot_id: 2,
         url: 'imagesecondspot.com',
