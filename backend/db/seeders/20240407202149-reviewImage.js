@@ -1,5 +1,5 @@
 'use strict';
-const {reviewImage} = require('../models/');
+const {ReviewImage} = require('../models/');
 /** @type {import('sequelize-cli').Migration} */
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-      await reviewImage.bulkCreate([
+      await ReviewImage.bulkCreate([
         {
         review_id:1,
         url: 'imagefirstreview.com',
