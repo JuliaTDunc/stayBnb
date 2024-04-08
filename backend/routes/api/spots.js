@@ -6,8 +6,7 @@ const { restoreUser, requireAuth } = require('../../utils/auth');
 const {Spot, Review, User, reviewImage, spotImage, Booking} = require('../../db/models');
 const {handleValidationErrors} = require('../../utils/validation');
 const {check} = require('express-validator');
-ownerId
-//Get all the spots
+
 /*router.get('/', async(req,res)=>{
     const {page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice, maxPrice} = req.query.params;
     if(page < 1 || size < 1 || size > 20 || (minPrice && minPrice < 0) || (maxPrice && maxPrice < 0)){
@@ -277,7 +276,7 @@ router.post('/', requireAuth, validateSpot, async(req,res, next) => {
         price
     });
     res.status(201).json({spot})
-    } catch (error) {
+    } catch (err) {
         error.status = 400;
         error.body = {
             message: 'Bad Request',
@@ -432,7 +431,7 @@ router.delete('/:spotId', requireAuth, async(req,res,next) => {
             }
         });
         res.json({message: 'Successfully deleted'})
-    } catch(error){
+    } catch(err){
        return next(err)
     }
 });
