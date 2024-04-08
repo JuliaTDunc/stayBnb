@@ -259,8 +259,7 @@ router.get("/", async (req, res, next) => {
 
 //Create a spot
 router.post('/', requireAuth, validateSpot, async(req,res, next) => {
-    const ownerId = req.user.id
-    const owner_id = ownerId
+    const owner_id = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body; 
     try{
     const spot = await Spot.create({
@@ -369,7 +368,7 @@ router.get("/:spotId", async (req, res, next) => {
 //Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
     const { spotId } = req.params;
-    const ownerId = req.user.id;
+    const owner_id = req.user.id;
     const { address, city, state, country, lat, lng, name, description, price } = req.body
     try {
         let spot = await Spot.findByPk(spotId)
@@ -381,7 +380,7 @@ router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
             }
             return next(err)
         }
-        if (spot.owner_id !== ownerId) {
+        if (spot.owner_id !== owner_id) {
             const err = new Error(`Spot couldn't be found`);
             err.status = 400;
             err.body = {
@@ -405,7 +404,7 @@ router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
 });
 //Delete a spot
 router.delete('/:spotId', requireAuth, async(req,res,next) => {
-    const ownerId = req.user.id
+    const owner_id = req.user.id
     const {spotId} = req.params;
     try{
         const spot = await Spot.findByPk(spotId);
@@ -417,7 +416,7 @@ router.delete('/:spotId', requireAuth, async(req,res,next) => {
             }
             return next(err)
         }
-        if(spot.owner_id !== ownerId){
+        if(spot.owner_id !== owner_id){
             const err = new Error(`Spot could not be found`);
             err.status = 400;
             err.body = {
