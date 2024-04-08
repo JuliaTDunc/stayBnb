@@ -259,7 +259,8 @@ router.get("/", async (req, res, next) => {
 
 //Create a spot
 router.post('/', requireAuth, validateSpot, async(req,res, next) => {
-    const owner_id = req.user.id
+const {ownerId} = req.user.id;
+const owner_id = ownerId
     const { address, city, state, country, lat, lng, name, description, price } = req.body; 
     try{
     const spot = await Spot.create({
@@ -290,7 +291,6 @@ router.post('/', requireAuth, validateSpot, async(req,res, next) => {
 router.post('/:spotId/images', requireAuth, restoreUser, async (req, res, next) => {
         const {url, preview} = req.body
         const previewImage = preview
-
 
         const spot = await Spot.findByPk(req.params.spotId);
         if(spot === null) {
@@ -368,7 +368,8 @@ router.get("/:spotId", async (req, res, next) => {
 //Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
     const { spotId } = req.params;
-    const owner_id = req.user.id;
+const {ownerId} = req.user.id;
+const owner_id = ownerId;
     const { address, city, state, country, lat, lng, name, description, price } = req.body
     try {
         let spot = await Spot.findByPk(spotId)
@@ -404,7 +405,8 @@ router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
 });
 //Delete a spot
 router.delete('/:spotId', requireAuth, async(req,res,next) => {
-    const owner_id = req.user.id
+const {ownerId} = req.user.id;
+const owner_id = ownerId
     const {spotId} = req.params;
     try{
         const spot = await Spot.findByPk(spotId);
