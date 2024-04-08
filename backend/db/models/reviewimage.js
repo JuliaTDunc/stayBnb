@@ -18,10 +18,18 @@ module.exports = (sequelize, DataTypes) => {
     review_id:{
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Review',
+        key: 'id'
+      }
     },
-    image: {
+    url: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    previewImage: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
   }, {
     sequelize,

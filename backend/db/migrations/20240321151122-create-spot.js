@@ -58,9 +58,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      preview_image: {
-        type: Sequelize.STRING
-      }
     }, options);
   }, 
   async down(queryInterface, Sequelize) {

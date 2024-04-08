@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Spot.belongsTo(models.User,{foreignKey:'owner_id'});
-      Spot.hasMany(models.Review)
+      Spot.hasMany(models.Review);
+      Spot.hasMany(models.spotImage);
     }
   }
   Spot.init({
@@ -58,9 +59,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    preview_image: {
-      type: DataTypes.STRING
-    }
   }
   , {
     sequelize,
