@@ -1,5 +1,5 @@
 'use strict';
-const {spotImage} = require('../models/')
+const {SpotImage} = require('../models/')
 /** @type {import('sequelize-cli').Migration} */
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await spotImage.bulkCreate([
+    await SpotImage.bulkCreate([
       {
         spot_id: 1,
         url: 'imagefirstspot.com',
@@ -29,7 +29,7 @@ module.exports = {
   async down (queryInterface, Sequelize) {
     options.tableName = 'SpotImages';
     const Op = Sequelize.Op;
-    return queryInterface.bulkDelete(options, {
+    return queryInterface.bulkDelete(options.tableName, {
       spot_id: { [Op.in]: [1, 2, 3] }
     }, {});
   }
