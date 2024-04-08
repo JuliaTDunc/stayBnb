@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      spotId: {
+      spot_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
