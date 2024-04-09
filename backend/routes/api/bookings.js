@@ -1,8 +1,10 @@
-const express = require('express')
+const express = require('express');
+const bcrypt = require('bcryptjs');
 const router = express.Router();
-const { Spot, User, Booking } = require('../../db/models');
+const { Spot, User, Booking, spotImage, Review, ReviewImage, Sequelize } = require('../../db/models');
 const {restoreUser, requireAuth} = require('../../utils/auth');
-
+const { check } = require('express-validator');
+const { handleValidationErrors } = require('../../utils/validation');
 //Get all of the current users bookings
 router.get('/session', restoreUser, async (req,res) => {
     const userId = req.user.id;
@@ -22,51 +24,95 @@ router.put('/:bookingId', requireAuth, async(req,res) => {
     const {bookingId} = req.query.params;
     const userId = req.user.id;
     const {startDate, endDate} = req.body;
-    try{
+    const errors = {};
         const booking = await Booking.findByPk(bookingId);
         if(!booking){
             return res.status(404).json({message: "Booking couldn't be found"})
         }
         if(booking.userId !== userId){
-            return res.status(403).json({message: "Not authorized"})
+            return res.status(403).json({message: "Forbidden"})
         }
-        if(new Date(booking.endDate) < new Date()){
+        if(new Date().toISOString().split('T')[0] > new Date(booking.endDate.toISOString().split('T')[0])){
             return res.status(403).json({message: "Past bookings can't be modified"})
         }
-        const existingBooking = await Booking.findOne({
-            where: {
-                id: {[Op.not]: bookingId},
-                spotId: booking.spotId,
-                [Op.or]: [
-                    {startDate: {[Op.lte]: endDate}},
-                    {endDate: {[Op.gte]: startDate}}
-                ]
+    const existingBooking = await Booking.findAll({
+        where: {
+            spotId: booking.spotId
+        },
+        attributes: ['id', 'startDate', 'endDate']
+    })
+
+    if (existingBooking.length > 0) {
+        const conflictErrors = {};
+
+        for (let i = 0; i < existingBooking.length; i++) {
+            const existingStartDate = new Date(existingBooking[i].startDate).toISOString().split('T')[0];
+            const existingEndDate = new Date(existingBooking[i].endDate).toISOString().split('T')[0];
+            const reqStartDate = new Date(startDate).toISOString().split('T')[0];
+            const reqEndDate = new Date(endDate).toISOString().split('T')[0];
+
+            if (existingBooking[i].id !== Number(bookingId)) {
+
+                if ((reqStartDate === existingStartDate || reqStartDate === existingEndDate) ||
+                    (reqStartDate > existingStartDate && reqStartDate < existingEndDate) ||
+                    (reqStartDate < existingStartDate && reqStartDate > existingEndDate)) {
+                    conflictErrors.startDate = "Start date conflicts with an existing booking"
+                }
+
+                if ((reqEndDate === existingEndDate || reqEndDate === existingStartDate) ||
+                    (reqEndDate > existingStartDate && reqEndDate < existingEndDate)) {
+                    conflictErrors.endDate = "End date conflicts with an existing booking"
+                }
+
+                if ((reqStartDate < existingStartDate && reqEndDate > existingEndDate) ||
+                    (reqStartDate > existingStartDate && reqEndDate < existingEndDate)) {
+                    conflictErrors.startDate = "Start date conflicts with an existing booking"
+                    conflictErrors.endDate = "End date conflicts with an existing booking"
+                }
+            }
+            if (Object.keys(conflictErrors).length > 0) {
+                const errorMsg = {
+                    message: "Sorry, this spot is already booked for the specified dates",
+                    errors: conflictErrors
+                }
+                return res.status(403).json(errorMsg);
+            }
+        }
+    }
+
+    await booking.update({
+        startDate,
+        endDate
+    })
+        .catch((error) => {
+            for (let i = 0; i < error.errors.length; i++) {
+                let key = error.errors[i].path
+                errors[`${key}`] = error.errors[i].message
             }
         });
-        if(existingBooking){
-            return res.status(403).json({
-                message: "Sorry this spot is already booked for the specified dates",
-                errors: {
-                    startDate: "Start date conflicts with an existing booking",
-                    endDate: "End date conflicts with an existing booking"
-                }
-            });
-        }
-        booking.startDate = startDate;
-        booking.endDate = endDate;
-        await booking.save();
 
-        res.status(200).json(booking)
-    } catch(error){
-        if(error.name === 'SequelizeValidationError'){
-            return res.status(400).json({
-                message: "Validation error",
-                error: error.message
-            })
-        } else{
-            console.error('Error updating booking', error);
-            res.status(500).json({error: 'Internal Server Error'})
+    if (Object.keys(errors).length > 0) {
+        const errorMsg = {
+            message: "Bad Request",
+            errors: errors
         }
+
+        return res.status(400).json(errorMsg);
+    } else {
+        let splitCreate = booking.createdAt.toISOString().split('T').join(' ');
+        let createdAt = splitCreate.split('.')[0];
+        let splitUpdate = booking.updatedAt.toISOString().split('T').join(' ');
+        let updatedAt = splitUpdate.split('.')[0];
+
+        return res.json({
+            id: booking.id,
+            spotId: Number(booking.spotId),
+            userId: booking.userId,
+            startDate: new Date(booking.startDate).toISOString().split('T')[0],
+            endDate: new Date(booking.endDate).toISOString().split('T')[0],
+            createdAt,
+            updatedAt
+        });
     }
 });
 //delete a booking
