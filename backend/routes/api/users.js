@@ -33,18 +33,15 @@ router.post(
     async (req, res) => {
         const { firstName, lastName, email, password, username } = req.body;
         const hashedPassword = bcrypt.hashSync(password);
-        const user = await User.create({ firstName, lastName, username, email, hashedPassword });
-        console.log(user)
-        console.log("this is the id =================", user.id)
+        const user = await User.create({ username, email, hashedPassword, firstName, lastName });
         const safeUser = {
             id: user.id,
+            username: user.username,
+            email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            username: user.username,
         };
-
-        console.log(user, safeUser)
         await setTokenCookie(res, safeUser);
 
         return res.json({
