@@ -4,7 +4,7 @@ const { Spot, User, Booking, spotImage, Review, ReviewImage, Sequelize } = requi
 const {restoreUser, requireAuth} = require('../../utils/auth');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-spot
+
 //Get all of the current users bookings
 router.get('/current', requireAuth, async (req,res) => {
     const userId = req.user.id;
