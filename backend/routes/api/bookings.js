@@ -6,7 +6,7 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 spot
 //Get all of the current users bookings
-router.get('/session', requireAuth, async (req,res) => {
+router.get('/current', requireAuth, async (req,res) => {
     const userId = req.user.id;
         try{
         const bookings = await Booking.findAll({

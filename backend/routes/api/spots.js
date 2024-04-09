@@ -310,7 +310,7 @@ router.post('/:spotId/images', requireAuth, restoreUser, async (req, res, next) 
     
 });
 //Get all spots owned by the current user
-router.get('/session', requireAuth, async (req,res, next) => {
+router.get('/current', requireAuth, async (req,res, next) => {
         const noAvg = await Spots.findAll({
         where:{
                 owner_id: req.user.id
