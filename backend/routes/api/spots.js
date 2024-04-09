@@ -2,9 +2,7 @@
 const express = require('express')
 const router = express.Router();
 const {requireAuth } = require('../../utils/auth');
-const {Spot, Review, User, ReviewImage, spotImage, Booking, Sequelize} = require('../../db/models');
-
-//*Get all Spots
+const {Spot, Review, User, ReviewImage, spotImage, Booking, Sequelize} = require('../../db/models');//*Get all Spots
 router.get('/', async (req, res) => {
     try {
         let page = parseInt(req.query.page) || 1;
@@ -221,7 +219,7 @@ router.get("/:spotId", async (req, res, next) => {
 }
 })
 //Edit a spot
-router.put('/:spotId', requireAuth, validateSpot, async(req,res,next)=> {
+router.put('/:spotId', requireAuth, async(req,res,next)=> {
     const { spotId } = req.params;
 const {ownerId} = req.user.id;
 const owner_id = ownerId;
