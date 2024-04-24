@@ -2,6 +2,9 @@
 
 ## Database Schema Design
 
+![db-schema]
+
+[db-schema]: https://dbdiagram.io/d/65e9426fb1f3d4062c536571
 
 ## API Documentation
 
