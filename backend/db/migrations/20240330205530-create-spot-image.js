@@ -1,4 +1,7 @@
 'use strict';
+
+const { toDefaultValue } = require('sequelize/lib/utils');
+
 /** @type {import('sequelize-cli').Migration} */
 
 let options = {};
@@ -31,11 +34,13 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     }, options);
   },

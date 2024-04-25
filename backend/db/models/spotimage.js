@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      spotImage.belongsTo(models.Spot, { foreignKey: 'spot_id' })
+      spotImage.belongsTo(models.Spot, { foreignKey: 'spotId' })
     }
   }
   spotImage.init({
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    preview: {
+    previewImage: {
       type: DataTypes.BOOLEAN,
       allowNull: false
     }
