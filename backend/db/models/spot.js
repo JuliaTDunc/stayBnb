@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    owner_id: {
+    ownerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {

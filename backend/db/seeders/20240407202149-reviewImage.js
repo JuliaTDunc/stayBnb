@@ -32,17 +32,17 @@ module.exports = {
       console.log("Attempting to bulk create ReviewImages...");
       await ReviewImage.bulkCreate([
         {
-          review_id: 1,
+          reviewId: 1,
           url: 'imagefirstreview.com',
           previewImage: true
         },
         {
-          review_id: 2,
+          reviewId: 2,
           url: 'imagesecondreview.com',
           previewImage: true
         },
         {
-          review_id: 3,
+          reviewId: 3,
           url: 'imagesthirdreview.com',
           previewImage: true
         },

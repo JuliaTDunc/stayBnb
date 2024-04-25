@@ -14,7 +14,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      spot_id: {
+      spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -26,7 +26,7 @@ module.exports = {
      url: {
         type: Sequelize.STRING
       },
-      preview: {
+      previewImage: {
         type: Sequelize.BOOLEAN,
       },
       createdAt: {

@@ -13,19 +13,19 @@ module.exports = {
       console.log("Attempting to bulk create spot images...");
       await spotImage.bulkCreate([
         {
-          spot_id: 1,
+          spotId: 1,
           url: 'imagefirstspot.com',
-          preview: true
+          previewImage: true
         },
         {
-          spot_id: 2,
+          spotId: 2,
           url: 'imagesecondspot.com',
-          preview: true
+          previewImage: true
         },
         {
-          spot_id: 3,
+          spotId: 3,
           url: 'imagesthirdspot.com',
-          preview: true
+          previewImage: true
         },
       ], { validate: true, returning: false });
 
