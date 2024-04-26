@@ -16,13 +16,12 @@ router.get('/', async (req, res) => {
 });
 
 //Create a spot
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, validateSpot, async (req, res) => {
     const { ownerId } = req.user.id;
-    const owner_id = ownerId
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
     try {
         const spot = await Spot.create({
-            owner_id,
+            ownerId,
             address,
             city,
             state,
@@ -36,14 +35,9 @@ router.post('/', requireAuth, async (req, res) => {
         res.status(201).json({ spot })
     } catch (err) {
         if (err.name === 'SequelizeValidationError') {
-            const errors = {};
-            err.errors.forEach((error) => {
-                errors[error.path] = error.message;
-            });
-            return res.status(400).json({ message: "Validation error", errors });
+            return res.status(400).json({ message: "Validation error"});
         } else {
-            console.error(err);
-            return res.status(500).json({ error: err.message });
+            return res.status(400).json({message: 'Bad Request'})
         }
     }
 });
@@ -120,23 +114,19 @@ router.get('/current', requireAuth, async (req, res) => {
     }
 });
 
-router.get("/:spotId", async (req, res, next) => {
+router.get("/:spotId", async (req, res) => {
     try {
-        const spotId = parseInt(req.params.spotId, 10)
-        if (isNaN(spotId)) {
-            return res.status(400).json({ error: "\"spotId\" must be a valid integer" })
-        }
+        const spotId = parseInt(req.params.spotId)
 
         const spot = await Spot.findByPk(spotId, {
             include: [
                 {
                     model: spotImage,
                     as: 'spotImages',
-                    attributes: ['id', 'url', 'Image']
+                    attributes: ['id', 'url', 'previewImage']
                 },
                 {
-                    model: Review,
-                    attributes: []
+                    model: Review
                 },
                 {
                     model: User,
@@ -156,12 +146,9 @@ router.get("/:spotId", async (req, res, next) => {
         if (spot) {
             spot.avgStarRating = parseFloat(spot.avgStarRating).toFixed(1);
             res.status(200).json(spot);
-        } else {
-            res.status(404).json({ message: "Spot couldn't be found" });
         }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message });
+        res.status(404).json({ message: "Spot couldn't be found" });
     }
 })
 //Edit a spot
