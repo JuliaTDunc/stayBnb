@@ -1,12 +1,12 @@
 
 const spotData = (spot) => {
-    spot.dataValues.num = 0;
+    spot.dataValues.numReviews = 0;
     let sum = 0;
     for(let review of spot.dataValues.Reviews){
         const curr = review.dataValues;
-        spot.dataValues.num++;
+        spot.dataValues.numReviews++;
         sum += curr.stars;
-        const avg = sum / spot.dataValues.num
+        const avg = sum / spot.dataValues.numReviews
         spot.dataValues.avgRating = Number(avg.toFixed(1))
     }
     delete spot.dataValues.Reviews;
@@ -30,7 +30,7 @@ const spotsArray = (spots) => {
         }
         for(let image of curr.spotImages){
             const currImage = image.dataValues
-            if(curr.id === currImage.spotId && currImage.previewImage === true){
+            if(curr.id === currImage.spotId && currImage.preview === true){
                 curr.previewImage = currImage.url
             }
         }

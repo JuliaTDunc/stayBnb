@@ -1,4 +1,5 @@
 const { validationResult, check } = require('express-validator');
+const {Spot, spotImage} = require('../db/models');
 const handleValidationErrors = (req, _res, next) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -114,7 +115,7 @@ const validateSpot = [
     check('price')
         .exists({ checkFalsy: true })
         .isFloat({ min: 0 })
-        .withMessage('Price per day is required and must be a positive number'),
+        .withMessage('Price per day is required'),
     handleValidationErrors
 ];
 const currDate = new Date().toISOString().split("T")[0];
@@ -147,14 +148,13 @@ const validateReview = [
 
 const existingSpot = async (req, res, next) => {
     const id = req.params.spotId
-    const currSpot = await Spot.findByPk({
-        spotId,
+    const currSpot = await Spot.findByPk(id, {
         include:[{model: spotImage}]
     });
     if(!currSpot){
         const err = new Error("Spot couldn't be found");
-        err.status = 404;
-        return newxt(err)
+        err.status(404);
+        return next(err)
     } else{
         req.currSpot = currSpot;
         req.spotImage = currSpot.spotImage

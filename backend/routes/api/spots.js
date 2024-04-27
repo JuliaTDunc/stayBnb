@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router();
-const {validateSpot, validateQuery} = require('../../utils/validation');
+const {validateSpot, validateQuery, existingSpot, isSpotOwner} = require('../../utils/validation');
 const { requireAuth } = require('../../utils/auth');
 const { Spot, Review, User, ReviewImage, spotImage, Booking, Sequelize } = require('../../db/models');
 const { validator } = require('sequelize/lib/utils/validator-extras');
 const {validationResult, check} = require('express-validator');
-const {spotsArray} = require('../../utils/spotData')
+const {spotData, spotsArray} = require('../../utils/spotData')
 
 const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
     const where = {};
@@ -67,60 +67,59 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
 
         return res.json({ Spots: formattedSpots });
     });
-
-
 //Create a spot
-router.post('/', requireAuth, validateSpot, async (req, res) => {
-    const { ownerId } = req.user.id;
-    const { address, city, state, country, lat, lng, name, description, price } = req.body;
-   // try {
-        const spot = await Spot.create({
-            ownerId,
-            address,
-            city,
-            state,
-            country,
-            lat,
-            lng,
-            name,
-            description,
-            price
-        });
-        res.status(201).json({ spot })
-    //} catch (err) {
-    //    if (err.name === 'SequelizeValidationError') {
-    //        return res.status(400).json({ message: "Validation error"});
-    //    } else {
-    //        return res.status(400).json({message: 'Bad Request'})
-    //    }
-   // }
-});/*
+router.post("/", requireAuth, validateSpot, async (req, res) => {
+    const {
+        user,
+        body: { address, city, state, country, lat, lng, name, description, price },
+    } = req;
+
+    const newSpot = await Spot.create({
+        ownerId: user.id,
+        address,
+        city,
+        state,
+        country,
+        lat,
+        lng,
+        name,
+        description,
+        price,
+    });
+
+    return res.status(201).json(newSpot);
+});
+
+
 //Add an Image to a Spot based on the Spot's id
-router.post('/:spotId/images', requireAuth, async (req, res, next) => {
-    /*const { url, previewImage } = req.body
-    const { spotId } = req.params
-    const userId = req.user.id
-    try {
-        const spot = await Spot.findByPk(spotId);
-        if (!spot) {
-            return res.status(404).json({ message: 'Spot could not be found' });
+router.post('/:spotId/images', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
+    const { spotImages } = req;
+    const { spotId } = req.params.spotId;
+    const newImgs = [...body];
+    let numImg = 0;
+for(let newImg of newImgs.slice(1,5)){
+    if(newImgs.url) numImg++
+}
+if(spotImages.length){
+    for(let i = 0; i < spotImages.length; i++){
+        currImg = spotImages[i].dataValues;
+        if(currImg.previewImage){
+            await spotImage.destroy({where:{id: currImg.id}})
+        } else if(numImgs > 0){
+            await spotImage.destroy({where:{id:currImg.id}})
+            numImg--
         }
-        if (spot.owner_id !== userId) {
-            return res.status(403).json({ message: 'Forbidden' });
-        }
-        const image = await spotImage.create({ spotId, url, previewImage });
-
-        res.status(200).json({
-            id: image.id,
-            url: image.url,
-            previewImage: image.previewImage
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message });
     }
-
-});*/
+}
+await spotImage.create({spotId, url: newImgs[0].url, preview:true})
+for(let newImg of newImgs.slice(1,5)){
+    if(newImg.url){
+        await spotImage.create({spotId, url: newImg.url, preview:false})
+    }
+}
+const createdImgs = await spotImage.findAll({where: {spotId}});
+return res.json(createdImgs)
+});
 //Get all spots owned by the current user
 router.get('/current', requireAuth, async (req, res) => {
     try {
@@ -136,56 +135,19 @@ router.get('/current', requireAuth, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-/*
-const spotExists = async (req, _res, next) => {
-    // If the spot doesn't exist, return an error
-    const spotData = await Spot.findOne({
-        where: {
-            id: req.params.spotId,
-        },
-        include: [{ model: spotImage }],
-    });
-
-    if (!spotData) {
-        const err = new Error("Spot couldn't be found");
-        err.hideTitle = true;
-        err.status = 404;
-        return next(err);
-    } else {
-        // If it does exist, attach the queried data to the request
-        req.spotData = spotData;
-        req.spotImage = spotData.spotImage
-        return next();
-    }
-};
-const formatOneSpot = (spotData) => {
-    spotData.dataValues.numReviews = 0;
-    let starSum = 0;
-
-    for (const review of spotData.dataValues.Reviews) {
-        const currReview = review.dataValues;
-        spotData.dataValues.numReviews++;
-        starSum += currReview.stars;
-        const avg = starSum / spotData.dataValues.numReviews
-        spotData.dataValues.avgRating = Number(avg.toFixed(1));
-    }
-    delete spotData.dataValues.Reviews;
-
-    return spotData;
-};
-router.get("/:spotId", spotExists, async (req, res) => {
+//Get spot by id
+router.get("/:spotId", existingSpot, async (req, res) => {
     
     const { spotId } = req.params;
 
-    const spotData = await Spot.findOne({
+    const currSpot = await Spot.findOne({
         where: {
             id: spotId,
         },
         include: [
             {
                 model: spotImage,
-                attributes: ["id", "url", "previewImages"],
+                attributes: ["id", "url", "previewImage"],
             },
             {
                 model: User,
@@ -196,10 +158,10 @@ router.get("/:spotId", spotExists, async (req, res) => {
         ],
     });
 
-    const formattedSpot = formatOneSpot(spotData);
+    const formattedSpot = spotData(currSpot);
 
     return res.json(formattedSpot);
-});
+});/*
 //Edit a spot
 router.put('/:spotId', requireAuth, async (req, res, next) => {
     const { spotId } = req.params;
