@@ -68,12 +68,12 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
         return res.json({ Spots: formattedSpots });
     });
 
-/*
+
 //Create a spot
 router.post('/', requireAuth, validateSpot, async (req, res) => {
     const { ownerId } = req.user.id;
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
-    try {
+   // try {
         const spot = await Spot.create({
             ownerId,
             address,
@@ -87,14 +87,14 @@ router.post('/', requireAuth, validateSpot, async (req, res) => {
             price
         });
         res.status(201).json({ spot })
-    } catch (err) {
-        if (err.name === 'SequelizeValidationError') {
-            return res.status(400).json({ message: "Validation error"});
-        } else {
-            return res.status(400).json({message: 'Bad Request'})
-        }
-    }
-});
+    //} catch (err) {
+    //    if (err.name === 'SequelizeValidationError') {
+    //        return res.status(400).json({ message: "Validation error"});
+    //    } else {
+    //        return res.status(400).json({message: 'Bad Request'})
+    //    }
+   // }
+});/*
 //Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', requireAuth, async (req, res, next) => {
     /*const { url, previewImage } = req.body
@@ -120,55 +120,24 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
         res.status(500).json({ error: err.message });
     }
 
-});
+});*/
 //Get all spots owned by the current user
 router.get('/current', requireAuth, async (req, res) => {
     try {
         const currId = req.user.id;
         const ownedSpots = await Spot.findAll({
             where: { ownerId: currId },
-            include: [
-                {
-                    model: spotImage,
-                    as: 'spotImages',
-                    attributes: ['url'],
-                    where: { previewImage: true },
-                    limit: 1
-                },
-                {
-                    //ADD REVIEW ATTRIBUTES
-                    
-                    model: Review,
-                    attributes: []
-                }
-               
-            ],
-            attributes: {
-                include: [
-                    [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating']
-                ]
-            },
-            group: ['Spot.id']
+            include: [{model: Review}, {model: spotImage}],
         });
-
-        const ownedSpotsResponse = ownedSpots.map(spot => {
-            const spotJSON = spot.toJSON();
-            spotJSON.avgRating = parseFloat(spotJSON.avgRating).toFixed(1);
-
-            if (spotJSON.spotImages && spotJSON.spotImages.length) {
-                spotJSON.previewImage = spotJSON.spotImages[0].url;
-            }
-            delete spotJSON.spotImages;
-            return spotJSON;
-        });
-        res.status(200).json({ Spots: ownedSpotsResponse });
+        const formattedSpots = spotsArray(ownedSpots)
+        res.status(200).json({ Spots: formattedSpots });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });
     }
 });
 
-
+/*
 const spotExists = async (req, _res, next) => {
     // If the spot doesn't exist, return an error
     const spotData = await Spot.findOne({
