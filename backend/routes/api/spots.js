@@ -65,7 +65,7 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
 
         const formattedSpots = spotsArray(spotData);
 
-        return res.json({ Spots: formattedSpots, page, size });
+        return res.json({ Spots: formattedSpots });
     });
 
 /*

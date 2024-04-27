@@ -17,8 +17,8 @@ const spotsArray = (spots) => {
         let sum = 0
         let num = 0;
         let curr = spot.dataValues;
-        curr.previewImage = null;
         curr.avgRating = null;
+        curr.previewImage = null;
         for(let review of curr.Reviews){
             let currRev = review.dataValues;
             if(curr.id === currRev.spotId){
@@ -30,7 +30,7 @@ const spotsArray = (spots) => {
         }
         for(let image of curr.spotImages){
             const currImage = image.dataValues
-            if(curr.id === currImage.spotId && currImage.preview === true){
+            if(curr.id === currImage.spotId && currImage.previewImage === true){
                 curr.previewImage = currImage.url
             }
         }
