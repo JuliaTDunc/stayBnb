@@ -115,7 +115,7 @@ const validateSpot = [
     check('price')
         .exists({ checkFalsy: true })
         .isFloat({ min: 0 })
-        .withMessage('Price per day is required'),
+        .withMessage('Price per day is required and must be greater than 0'),
     handleValidationErrors
 ];
 const currDate = new Date().toISOString().split("T")[0];
@@ -153,7 +153,7 @@ const existingSpot = async (req, res, next) => {
     });
     if(!currSpot){
         const err = new Error("Spot couldn't be found");
-        err.status(404);
+        err.status = 404;
         return next(err)
     } else{
         req.currSpot = currSpot;
@@ -165,7 +165,7 @@ const existingSpot = async (req, res, next) => {
 const isSpotOwner = async (req, res, next) => {
     if (req.user.id !== req.currSpot.ownerId){
         const err = new Error("Forbidden");
-        err.status(403)
+        err.status = 403
         return next(err);
     } else {
         return next();
@@ -179,7 +179,7 @@ const existingReview = async (req, res,next)=>{
     });
     if(!currReview){
         const err = new Error("Review couldn't be found");
-        err.status(404);
+        err.status = 404;
         return next(err)
     }else{
         req.currReview = currReview;
@@ -189,7 +189,7 @@ const existingReview = async (req, res,next)=>{
 const isReviewOwner = async(req,res,next)=>{
     if(req.user.id !== req.currReview.userId){
         const err = new Error("Forbidden")
-        err.status(403)
+        err.status = 403
         return next(err)
     }else{
         return next();

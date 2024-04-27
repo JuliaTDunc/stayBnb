@@ -90,19 +90,17 @@ router.post("/", requireAuth, validateSpot, async (req, res) => {
     return res.status(201).json(newSpot);
 });
 
-
 //Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
-    const { spotImages } = req;
-    const { spotId } = req.params.spotId;
+   const {spotImgs, body, params:{spotId}} = req;
     const newImgs = [...body];
     let numImg = 0;
 for(let newImg of newImgs.slice(1,5)){
-    if(newImgs.url) numImg++
+    if(newImg.url) numImg++
 }
-if(spotImages.length){
-    for(let i = 0; i < spotImages.length; i++){
-        currImg = spotImages[i].dataValues;
+if(spotImgs.length){
+    for(let i = 0; i < spotImgs.length; i++){
+        currImg = spotImgs[i].dataValues;
         if(currImg.previewImage){
             await spotImage.destroy({where:{id: currImg.id}})
         } else if(numImgs > 0){
@@ -161,45 +159,16 @@ router.get("/:spotId", existingSpot, async (req, res) => {
     const formattedSpot = spotData(currSpot);
 
     return res.json(formattedSpot);
-});/*
+});
 //Edit a spot
-router.put('/:spotId', requireAuth, async (req, res, next) => {
-    const { spotId } = req.params;
-    const { ownerId } = req.user.id;
-    const owner_id = ownerId;
+router.put('/:spotId', requireAuth, validateSpot, existingSpot, isSpotOwner, async (req, res, next) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
-    const userId = req.user.id;
-    try {
-        let spot = await Spot.findByPk(spotId)
-        if (!spot.id) {
-            return res.status(404).json({ message: "Spot couldn't be found" });
-        }
-        if (spot.owner_id !== userId) {
-            return res.status(403).json({ message: "Forbidden. You don't have permission to edit this spot." });
-        }
-
-        await spot.update({
+    const {currSpot} = req;
+        await currSpot.update({
             address, city, state, country, lat, lng, name, description, price
         })
-
-        res.status(200).json(spot);
-
-    } catch (err) {
-        if (err.name === 'SequelizeValidationError') {
-            const errors = err.errors.reduce((acc, error) => ({
-                ...acc,
-                [error.path]: error.message,
-            }), {});
-            return res.status(400).json({
-                message: "Bad Request",
-                errors,
-            });
-        } else {
-            console.error(err);
-            res.status(500).json({ error: err.message });
-        }
-    }
-});
+        res.status(200).json(currSpot);
+});/*
 //Delete a spot
 router.delete('/:spotId', requireAuth, async (req, res) => {
     const { ownerId } = req.user.id;
