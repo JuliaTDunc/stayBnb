@@ -4,7 +4,8 @@ const {validateSpot} = require('../../utils/validation');
 const { requireAuth } = require('../../utils/auth');
 const { Spot, Review, User, ReviewImage, spotImage, Booking, Sequelize } = require('../../db/models');
 const { validator } = require('sequelize/lib/utils/validator-extras');
-const {validationResult, check} = require('express-validator')
+const {validationResult, check} = require('express-validator');
+const {spotsArray} = require('../../utils/spotData')
 
 const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
     const where = {};
@@ -36,93 +37,6 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
     return where;
 };
 
-const handleValidationErrors = (req, _res, next) => {
-    const validationErrors = validationResult(req);
-
-    if (!validationErrors.isEmpty()) {
-        const errors = {};
-
-        validationErrors
-            .array()
-            .forEach((error) => (errors[error.path] = error.msg));
-
-        const err = Error("Bad request");
-        err.errors = errors;
-        err.status = 400;
-        err.title = "Bad request";
-        next(err);
-    }
-    next();
-};
-const validateQuery = [
-    check("page")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: 1, max: 10 })
-        .withMessage("Page must be greater than or equal to 1"),
-    check("size")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: 1, max: 20 })
-        .withMessage("Size must be greater than or equal to 1"),
-    check("maxLat")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ max: 90 })
-        .withMessage("Maximum latitude is invalid"),
-    check("minLat")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: -90 })
-        .withMessage("Minimum latitude is invalid"),
-    check("maxLng")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ max: 180 })
-        .withMessage("Maximum longitude is invalid"),
-    check("minLng")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: -180 })
-        .withMessage("Minimum longitude is invalid"),
-    check("minPrice")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: 0 })
-        .withMessage("Minimum price must be greater than or equal to 0"),
-    check("maxPrice")
-        .optional({ nullable: true, checkFalsy: true })
-        .isFloat({ min: 0 })
-        .withMessage("Maximum price must be greater than or equal to 0"),
-    handleValidationErrors,
-];
-const formatSpotsArray = (spotData) => {
-    //iterate each spot and set up default values for image and rating
-    for (const spot of spotData) {
-        let starSum = 0;
-        let starNum = 0;
-        const currSpot = spot.dataValues;
-        currSpot.preview = null;
-        currSpot.avgRating = null;
-
-        //iterate all reviews and add the avgRating to each one's spot
-        for (const review of currSpot.Reviews) {
-            const currReview = review.dataValues;
-
-            if (currSpot.id === currReview.spotId) {
-                starSum += currReview.stars;
-                starNum++;
-            }
-            const avg = starSum / starNum;
-            currSpot.avgRating = Number(avg.toFixed(1));
-        }
-        //iterate all spot images and add a previewImage to each one's spot
-        for (const image of currSpot.spotImage) {
-            const currImage = image.dataValues;
-
-            if (currSpot.id === currImage.spotId && currImage.previewImage === true) {
-                currSpot.preview = currImage.url;
-            }
-        }
-        delete currSpot.Reviews;
-        delete currSpot.spotImage;
-    }
-    return spotData;
-};
-
     router.get("/", validateQuery, async (req, res) => {
         let {
             page = 1,
@@ -149,7 +63,7 @@ const formatSpotsArray = (spotData) => {
             include: [{ model: Review }, { model: spotImage }],
         });
 
-        const formattedSpots = formatSpotsArray(spotData);
+        const formattedSpots = spotsArray(spotData);
 
         return res.json({ Spots: formattedSpots, page, size });
     });
