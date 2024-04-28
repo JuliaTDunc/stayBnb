@@ -192,8 +192,8 @@ router.get('/:spotId/bookings', requireAuth, existingSpot,async (req, res) => {
         }
 });
 //Create a new booking based on a spot's id
-router.post('/:spotId/booking', requireAuth, existingSpot, validateBooking, validateDates, async (req, res) => {
-        let {user, spotData, params:{spotId},body:{startDate,endDate}} = req;
+router.post('/:spotId/bookings', requireAuth, existingSpot, validateBooking, validateDates, async (req, res) => {
+        let {user, currSpot, params:{spotId},body:{startDate,endDate}} = req;
         spotId = Number(spotId)
         //check if we need this
         if(user.id === currSpot.ownerId){
@@ -206,8 +206,6 @@ router.post('/:spotId/booking', requireAuth, existingSpot, validateBooking, vali
             endDate
         });
         return res.json(newBooking)
-   
-
 });
 router.get('/:spotId/reviews', existingSpot, async (req, res) => {
     const { spotId } = req.params;

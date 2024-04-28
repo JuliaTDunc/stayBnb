@@ -1,5 +1,5 @@
 const { validationResult, check } = require('express-validator');
-const {Spot, spotImage} = require('../db/models');
+const {Spot, spotImage, Booking} = require('../db/models');
 const handleValidationErrors = (req, _res, next) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -125,7 +125,7 @@ const validateBooking = [
     .withMessage("startDate cannot be in the past"),
     check("endDate")
     .custom(async (endDate, {req})=> {
-        if(endDate <= req.bodt.startDate){
+        if(endDate <= req.body.startDate){
             throw new Error();
         }
     })
@@ -196,9 +196,8 @@ const isReviewOwner = async(req,res,next)=>{
     }
 };
 const existingBooking = async (req,res,next) => {
-    const currId = req.params.bookingId
-    const currBook = await Booking.findByPk({
-        currId,
+    const currBook = await Booking.findOne({
+        where: {id: req.params.bookingId},
         include:{model: Spot}
     });
     if(!currBook){
@@ -250,8 +249,8 @@ const validateDates = async (req, res, next) =>{
     const currBookings = await Booking.findAll();
     for(const booking of currBookings){
         const currStart = booking.dataValues.startDate.toISOString().split("T")[0];
-        const currEnd = booking.dataValues.endDate.toISOString.split("T")[0];
-        if(Number(req.params.bookingId) === bookingId) continue;
+        const currEnd = booking.dataValues.endDate.toISOString().split("T")[0];
+        if(Number(req.params.bookingId) === booking.id) continue;
         const errors = dateCompare(startDate, endDate, currStart, currEnd);
 
         if(errors.startDate || errors.endDate){
