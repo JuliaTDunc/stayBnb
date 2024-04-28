@@ -65,4 +65,5 @@ router.delete('/:bookingId', requireAuth, existingBooking, isBookingOwner, async
         return res.json({message: 'Successdully deleted.'})
     }
 })
+
 module.exports = router;
