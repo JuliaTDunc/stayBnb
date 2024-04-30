@@ -1,5 +1,5 @@
 const { validationResult, check } = require('express-validator');
-const {Spot, spotImage, Booking} = require('../db/models');
+const {Spot, spotImage, Review, ReviewImage, Booking} = require('../db/models');
 const handleValidationErrors = (req, _res, next) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -172,10 +172,9 @@ const isSpotOwner = async (req, res, next) => {
     }
 }
 const existingReview = async (req, res,next)=>{
-    const id = req.params.reviewId
-    const currReview = Review.findByPk({
-        reviewId,
-        include: [{model: ReviewImages}]
+    const currId = req.params.reviewId
+    const currReview = Review.findByPk(currId,{
+        include: [{model: ReviewImage}]
     });
     if(!currReview){
         const err = new Error("Review couldn't be found");

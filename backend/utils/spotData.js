@@ -19,26 +19,33 @@ const spotsArray = (spots) => {
         let curr = spot.dataValues;
         curr.avgRating = null;
         curr.previewImage = null;
+        if(curr.Reviews && curr.Reviews.length > 0){
         for(let review of curr.Reviews){
             let currRev = review.dataValues;
             if(curr.id === currRev.spotId){
                 sum += currRev.stars
                 num++;
             }
+        }
             const avg = sum / num;
             curr.avgRating = Number(avg.toFixed(1));
         }
-        for(let image of curr.spotImages){
+        if(curr.spotImage && curr.spotImage.length > 0){
+        for(let image of curr.spotImage){
             const currImage = image.dataValues
             if(curr.id === currImage.spotId && currImage.preview === true){
-                curr.previewImage = currImage.url
+                curr.previewImage = currImage.url;
+                break;
             }
         }
+    }
+    
         delete curr.Reviews
-        delete curr.spotImages
+        delete curr.spotImage
     }
     return spots;
-}
+};
+
 module.exports = {
     spotData,
     spotsArray

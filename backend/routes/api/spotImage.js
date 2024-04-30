@@ -12,7 +12,7 @@ router.delete('/:imageId', requireAuth, async(req,res) =>{
     });
     if(!img){
         return res.status(404).json({message:"Spot couldn't be found"});
-    }else if(img.Spot.ownerId !== userId){
+    }else if(img.Spot.ownerId !== req.user.id){
         return res.status(403).json({message:'Forbidden'})
     }else{
         await img.destroy();

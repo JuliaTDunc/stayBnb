@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('SpotImages', {
+    await queryInterface.createTable('spotImage', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -24,10 +24,10 @@ module.exports = {
           model: 'Spots',
           key: 'id'
         },
-        onDelete: 'cascade'
+        onDelete: 'CASCADE'
       },
      url: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       previewImage: {
         type: Sequelize.BOOLEAN,
@@ -45,7 +45,7 @@ module.exports = {
     }, options);
   },
   async down(queryInterface, Sequelize) {
-    options.tableName = 'SpotImages'
+    options.tableName = 'spotImage'
     await queryInterface.dropTable(options);
   }
 };

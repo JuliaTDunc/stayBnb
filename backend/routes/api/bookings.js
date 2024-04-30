@@ -12,7 +12,7 @@ router.get('/current', requireAuth, async(req,res) => {
     const currBookings = [];
     for(let spot of allSpots){
         const bookings = spot.Bookings;
-        spot.dataValues.preview = spot.spotImages[0].url
+        spot.dataValues.preview = spot.spotImage[0].url
         for(let booking of bookings){
             booking.dataValues.Spot = {
                 id: spot.id,
