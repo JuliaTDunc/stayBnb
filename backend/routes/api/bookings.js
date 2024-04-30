@@ -12,7 +12,9 @@ router.get('/current', requireAuth, async(req,res) => {
     const currBookings = [];
     for(let spot of allSpots){
         const bookings = spot.Bookings;
-        spot.dataValues.preview = spot.spotImage[0].url
+        if(spot.spotImages){
+        spot.dataValues.preview = spot.spotImages[0].url
+        }
         for(let booking of bookings){
             booking.dataValues.Spot = {
                 id: spot.id,
@@ -25,7 +27,7 @@ router.get('/current', requireAuth, async(req,res) => {
                 lng: spot.lng,
                 name: spot.name,
                 price: spot.price,
-                previewImage: spot.dataValues.previewImage
+                previewImage: spot.dataValues.preview
             };
             currBookings.push({
                 id:booking.id,
