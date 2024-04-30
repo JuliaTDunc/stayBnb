@@ -6,20 +6,23 @@ const {validateReview, existingReview, isReviewOwner} = require('../../utils/val
 
 //Get current users reviews
 router.get('/current', requireAuth, async (req,res) =>{
+  
     const allRevs = await Review.findAll({
         where:{userId: req.user.id},
         include:[{model:User,attributes:['id','firstName','lastName']},
         {model:Spot,attributes:{exclude:['createdAt','updatedAt','description']}},
         {model:ReviewImage,attributes:{exclude:['createdAt','updatedAt','reviewId']}}]
     });
+    const revws = await Review.findAll({where: {userId: req.user.id}})
+    //unused-spotImage-previewImage
     for(let rev of allRevs){
         let currSpot = rev.Spot.dataValues;
         let currImg = currSpot.spotImage[0];
         currSpot.preview = currImg.url;
         delete currSpot.spotImage;
     }
-    return res.json({Reviews: allRevs})
-})
+    return res.json({Reviews: revws, u:req.user.id})
+});
 const revImgNum = async (req, _res, next) => {
   if (req.reviewData.ReviewImage.length >= 10) {
     const err = new Error(

@@ -171,7 +171,7 @@ const isSpotOwner = async (req, res, next) => {
         return next();
     }
 }
-const existingReview = async (req, res,next)=>{
+const existingReview = async (req,_res,next)=>{
     const currId = req.params.reviewId
     const currReview = Review.findByPk(currId,{
         include: [{model: ReviewImage}]
@@ -185,7 +185,7 @@ const existingReview = async (req, res,next)=>{
         return next();
     }
 };
-const isReviewOwner = async(req,res,next)=>{
+const isReviewOwner = async(req,_res,next)=>{
     if(req.user.id !== req.currReview.userId){
         const err = new Error("Forbidden")
         err.status = 403
