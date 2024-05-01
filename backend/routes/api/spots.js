@@ -227,25 +227,25 @@ router.get('/:spotId/reviews', existingSpot, async (req, res) => {
 
         res.status(200).json({ Reviews: spotReviews });
 });
-
+//Create a review for a spot
 router.post('/:spotId/reviews', requireAuth, validateReview, existingSpot, async (req, res) => {
     let {user,params:{spotId},body:{review,stars}} = req;
     spotId = Number(spotId)
 
 
-        const existingReview = await Review.findOne({
+        const existingRev = await Review.findOne({
             where: { spotId, userId: user.id }
         });
-        if (existingReview) {
+        if (existingRev) {
             return res.status(500).json({ message: "User already has a review for this spot" });
         }else {
-        const newReview = await Review.create({
+        const newRev = await Review.create({
             userId: user.id,
             spotId,
             review,
             stars
         });
-            res.status(201).json(newReview);
+            res.status(201).json(newRev);
     }
 });
 
