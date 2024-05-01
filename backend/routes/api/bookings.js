@@ -12,8 +12,8 @@ router.get('/current', requireAuth, async(req,res) => {
     const currBookings = [];
     for(let spot of allSpots){
         const bookings = spot.Bookings;
-        if(spot.spotImages){
-        spot.dataValues.preview = spot.spotImages[0].url
+        if(spot.spotImage){
+        spot.dataValues.preview = spot.spotImage[0].url
         }
         for(let booking of bookings){
             booking.dataValues.Spot = {

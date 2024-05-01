@@ -7,25 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 module.exports = {
- /* async up (queryInterface, Sequelize) {
-      await ReviewImage.bulkCreate([
-        {
-        review_id:1,
-        url: 'imagefirstreview.com',
-        previewImage:true
-      },
-    {
-      review_id:2,
-      url: 'imagesecondreview.com',
-      previewImage: true
-    },
-  {
-    review_id:3,
-    url: 'imagesthirdreview.com',
-    previewImage: true
-  },
-], {validate: true, returning: false});
-  }*/async up(queryInterface, Sequelize) {
+async up(queryInterface, Sequelize) {
     console.log("Starting seeding process for ReviewImages...");
 
     try {
@@ -57,7 +39,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    options.tableName = 'ReviewImages';
+    options.tableName = 'ReviewImage';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options.tableName, {
       review_id: {[Op.in]: [1,2,3]}
