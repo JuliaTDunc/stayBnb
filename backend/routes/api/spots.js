@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const {validateSpot, validateQuery, existingSpot, isSpotOwner, validateReview, validateBooking, validateDates} = require('../../utils/validation');
 const { requireAuth } = require('../../utils/auth');
-const { Spot, Review, User, ReviewImage, spotImage, Booking, Sequelize } = require('../../db/models');
+const { Spot, Review, User, ReviewImage, SpotImage, Booking, Sequelize } = require('../../db/models');
 const { validator } = require('sequelize/lib/utils/validator-extras');
 const {validationResult, check} = require('express-validator');
 const {spotData, spotsArray} = require('../../utils/spotData')
@@ -102,20 +102,20 @@ if(spotImgs.length){
     for(let i = 0; i < spotImgs.length; i++){
         currImg = spotImgs[i].dataValues;
         if(currImg.previewImage){
-            await spotImage.destroy({where:{id: currImg.id}})
+            await SpotImage.destroy({where:{id: currImg.id}})
         } else if(numImgs > 0){
-            await spotImage.destroy({where:{id:currImg.id}})
+            await SpotImage.destroy({where:{id:currImg.id}})
             numImg--
         }
     }
 }
-await spotImage.create({spotId, url: newImgs[0].url, preview:true})
+await SpotImage.create({spotId, url: newImgs[0].url, preview:true})
 for(let newImg of newImgs.slice(1,5)){
     if(newImg.url){
-        await spotImage.create({spotId, url: newImg.url, preview:false})
+        await SpotImage.create({spotId, url: newImg.url, preview:false})
     }
 }
-const createdImgs = await spotImage.findAll({where: {spotId}});
+const createdImgs = await SpotImage.findAll({where: {spotId}});
 return res.json(createdImgs)
 });
 //Get all spots owned by the current user
@@ -124,7 +124,7 @@ router.get('/current', requireAuth, async (req, res) => {
         const currId = req.user.id;
         const ownedSpots = await Spot.findAll({
             where: { ownerId: currId },
-            include: [{model: Review}, {model: spotImage}],
+            include: [{model: Review}, {model: SpotImage}],
         });
         const formattedSpots = spotsArray(ownedSpots)
         res.status(200).json({ Spots: formattedSpots });
@@ -144,7 +144,7 @@ router.get("/:spotId", existingSpot, async (req, res) => {
         },
         include: [
             {
-                model: spotImage,
+                model: SpotImage,
                 attributes: ["id", "url", "previewImage"],
             },
             {

@@ -1,5 +1,5 @@
 const { validationResult, check } = require('express-validator');
-const {Spot, spotImage, Review, ReviewImage, Booking} = require('../db/models');
+const {Spot, SpotImage, Review, ReviewImage, Booking} = require('../db/models');
 const handleValidationErrors = (req, _res, next) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -149,7 +149,7 @@ const validateReview = [
 const existingSpot = async (req, res, next) => {
     const id = req.params.spotId
     const currSpot = await Spot.findByPk(id, {
-        include:[{model: spotImage}]
+        include:[{model: SpotImage}]
     });
     if(!currSpot){
         const err = new Error("Spot couldn't be found");
@@ -157,7 +157,7 @@ const existingSpot = async (req, res, next) => {
         return next(err)
     } else{
         req.currSpot = currSpot;
-        req.spotImage = currSpot.spotImage
+        req.SpotImage = currSpot.SpotImage
         return next();
     }
 };

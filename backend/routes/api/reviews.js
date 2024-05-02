@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {User,Spot,spotImage,Review,ReviewImage} = require('../../db/models');
+const {User,Spot,SpotImage,Review,ReviewImage} = require('../../db/models');
 const {requireAuth} = require('../../utils/auth');
 const {validateReview, existingReview, isReviewOwner} = require('../../utils/validation');
 
@@ -14,12 +14,12 @@ router.get('/current', requireAuth, async (req,res) =>{
         {model:ReviewImage,attributes:{exclude:['createdAt','updatedAt','reviewId']}}]
     });
     const revws = await Review.findAll({where: {userId: req.user.id}})
-    //unused-spotImage-previewImage
+    //unused-SpotImage-previewImage
     for(let rev of allRevs){
         let currSpot = rev.Spot.dataValues;
-        let currImg = currSpot.spotImage[0];
+        let currImg = currSpot.SpotImage[0];
         currSpot.preview = currImg.url;
-        delete currSpot.spotImage;
+        delete currSpot.SpotImage;
     }
     return res.json({Reviews: revws, u:req.user.id})
 });

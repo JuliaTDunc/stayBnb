@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {Spot, spotImage, Booking} = require('../../db/models');
+const {Spot, SpotImage, Booking} = require('../../db/models');
 const {validateBooking, validateDates, existingBooking, isBookingOwner} = require('../../utils/validation');
 const {requireAuth} = require('../../utils/auth');
 const currDate = new Date().toISOString().split("T")[0];
@@ -8,12 +8,12 @@ const currDate = new Date().toISOString().split("T")[0];
 //Get current users bookings
 router.get('/current', requireAuth, async(req,res) => {
     const {user} = req;
-    const allSpots = await Spot.findAll({include:[{model:spotImage,where:{previewImage:true}},{model:Booking, where:{userId:user.id}}]});
+    const allSpots = await Spot.findAll({include:[{model:SpotImage,where:{previewImage:true}},{model:Booking, where:{userId:user.id}}]});
     const currBookings = [];
     for(let spot of allSpots){
         const bookings = spot.Bookings;
-        if(spot.spotImage){
-        spot.dataValues.preview = spot.spotImage[0].url
+        if(spot.SpotImage){
+        spot.dataValues.preview = spot.SpotImage[0].url
         }
         for(let booking of bookings){
             booking.dataValues.Spot = {
