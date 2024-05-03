@@ -16,7 +16,7 @@ const handleValidationErrors = (req, _res, next) => {
     }
     next();
 };
-dataValues
+
 const validateLogin = [
     check("credential")
     .exists({checkFalsy: true})
