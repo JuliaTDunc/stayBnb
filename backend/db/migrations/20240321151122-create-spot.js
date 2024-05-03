@@ -16,6 +16,13 @@ module.exports = {
       },
       ownerId:{
         type: Sequelize.INTEGER,
+        type:Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'Users',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       address: {
         type: Sequelize.STRING,
@@ -34,10 +41,10 @@ module.exports = {
         allowNull: false
       },
       lat: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.FLOAT
       },
       lng: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.FLOAT
       },
       name: {
         type: Sequelize.STRING
