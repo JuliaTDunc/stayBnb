@@ -10,21 +10,27 @@ router.get('/current', requireAuth, async (req,res) =>{
     const allRevs = await Review.findAll({
         where:{userId: req.user.id},
         include:[{model:User,attributes:['id','firstName','lastName']},
-        {model:Spot,attributes:{exclude:['createdAt','updatedAt','description']}},
+        {model:Spot,attributes:{exclude:['createdAt','updatedAt','description']}, include: {model: SpotImage, where: {previewImage: true}}},
         {model:ReviewImage,attributes:{exclude:['createdAt','updatedAt','reviewId']}}]
     });
-    const revws = await Review.findAll({where: {userId: req.user.id}})
-    //unused-SpotImage-previewImage
+      const resArr = [];
     for(let rev of allRevs){
-        let currSpot = rev.Spot.dataValues;
-        let currImg = currSpot.SpotImage[0];
-        currSpot.preview = currImg.url;
-        delete currSpot.SpotImage;
+        let jsonRev = rev.toJSON();
+        if(Array.isArray(jsonRev.Spot.SpotImages) && jsonRev.Spot.SpotImages.length > 0){
+        let currImg = jsonRev.Spot.SpotImages[0];
+        jsonRev.Spot.preview = currImg.url;
+        }else{
+          jsonRev.Spot.preview = null
+        }
+      delete jsonRev.Spot.SpotImages;
+        resArr.push(jsonRev)
     }
-    return res.json({Reviews: revws, u:req.user.id})
+    return res.json({Reviews: resArr})
 });
-const revImgNum = async (req, _res, next) => {
-  if (req.reviewData.ReviewImage.length >= 10) {
+const revImgNum = async (req, res, next) => {
+  //let count = req.currReview.ReviewImages.length
+  //return res.json(count)
+  if (req.currReview.ReviewImages.length >= 10) {
     const err = new Error(
       "Maximum number of images for this resource was reached"
     );

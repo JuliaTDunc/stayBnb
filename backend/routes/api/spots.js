@@ -60,7 +60,7 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
             where,
             limit: size,
             offset: size * (page - 1),
-            include: [{ model: Review }, { model: spotImage }],
+            include: [{ model: Review }, { model: SpotImage }],
         });
 
         const formattedSpots = spotsArray(spotData);
