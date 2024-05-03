@@ -92,31 +92,11 @@ router.post("/", requireAuth, validateSpot, async (req, res) => {
 
 //Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
-   const {spotImgs, body, params:{spotId}} = req;
-    const newImgs = [...body];
-    let numImg = 0;
-for(let newImg of newImgs.slice(1,5)){
-    if(newImg.url) numImg++
-}
-if(spotImgs.length){
-    for(let i = 0; i < spotImgs.length; i++){
-        currImg = spotImgs[i].dataValues;
-        if(currImg.previewImage){
-            await SpotImage.destroy({where:{id: currImg.id}})
-        } else if(numImgs > 0){
-            await SpotImage.destroy({where:{id:currImg.id}})
-            numImg--
-        }
-    }
-}
-await SpotImage.create({spotId, url: newImgs[0].url, preview:true})
-for(let newImg of newImgs.slice(1,5)){
-    if(newImg.url){
-        await SpotImage.create({spotId, url: newImg.url, preview:false})
-    }
-}
-const createdImgs = await SpotImage.findAll({where: {spotId}});
-return res.json(createdImgs)
+    const data = {...req.body,spotId: req.params.spotId}
+    const image = await SpotImage.create(data)
+    delete image.createdAt
+    delete image.updatedAt
+    return res.json(image)
 });
 //Get all spots owned by the current user
 router.get('/current', requireAuth, async (req, res) => {

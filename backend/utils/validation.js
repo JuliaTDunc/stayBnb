@@ -16,7 +16,7 @@ const handleValidationErrors = (req, _res, next) => {
     }
     next();
 };
-
+dataValues
 const validateLogin = [
     check("credential")
     .exists({checkFalsy: true})
@@ -244,6 +244,7 @@ const dateCompare = (startDate, endDate, currStart, currEnd) =>{
     }
     return errors;
 }
+/////////DATAVALUEESSSSS?????////////////////////////////////////////////////////////////////////////////////////
 const validateDates = async (req, res, next) =>{
     const {startDate, endDate} = req.body;
     const currBookings = await Booking.findAll();

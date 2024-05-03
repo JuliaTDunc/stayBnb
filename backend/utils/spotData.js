@@ -1,47 +1,48 @@
 
 const spotData = (spot) => {
-    spot.dataValues.numReviews = 0;
+    spot = spot.toJSON();
+    spot.numReviews = 0;
     let sum = 0;
-    for(let review of spot.dataValues.Reviews){
-        const curr = review.dataValues;
-        spot.dataValues.numReviews++;
-        sum += curr.stars;
-        const avg = sum / spot.dataValues.numReviews
-        spot.dataValues.avgRating = Number(avg.toFixed(1))
+    for(let review of spot.Reviews){
+        spot.numReviews++;
+        sum += review.stars;
     }
-    delete spot.dataValues.Reviews;
+    if (spot.numReviews > 0) {
+    const avg = sum / spot.numReviews
+    spot.avgRating = avg;
+    }else{
+        spot.avgRating = null;
+    }
+    delete spot.Reviews;
     return spot;
 }
 const spotsArray = (spots) => {
+    spots = spots.map(spot => spot.toJSON());
     for(let spot of spots){
         let sum = 0
         let num = 0;
-        let curr = spot.dataValues;
-        curr.avgRating = null;
-        curr.previewImage = null;
-        if(curr.Reviews && curr.Reviews.length > 0){
-        for(let review of curr.Reviews){
-            let currRev = review.dataValues;
-            if(curr.id === currRev.spotId){
-                sum += currRev.stars
+        
+        spot.avgRating = null;
+        spot.previewImage = null;
+        if(spot.Reviews && spot.Reviews.length > 0){
+        for(let review of spot.Reviews){
+                sum += review.stars
                 num++;
-            }
         }
             const avg = sum / num;
-            curr.avgRating = Number(avg.toFixed(1));
+            spot.avgRating = avg;
         }
-        if(curr.SpotImage && curr.SpotImage.length > 0){
-        for(let image of curr.SpotImage){
-            const currImage = image.dataValues
-            if(curr.id === currImage.spotId && currImage.preview === true){
-                curr.previewImage = currImage.url;
+        if(spot.SpotImage && spot.SpotImage.length > 0){
+        for(let image of spot.SpotImage){
+            if(image.preview === true){
+                spot.previewImage = image.url;
                 break;
             }
         }
     }
     
-        delete curr.Reviews
-        delete curr.SpotImage
+        delete spot.Reviews
+        delete spot.SpotImage
     }
     return spots;
 };

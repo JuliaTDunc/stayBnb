@@ -7,41 +7,24 @@ const currDate = new Date().toISOString().split("T")[0];
 
 //Get current users bookings
 router.get('/current', requireAuth, async(req,res) => {
-    const {user} = req;
-    const allSpots = await Spot.findAll({include:[{model:SpotImage,where:{previewImage:true}},{model:Booking, where:{userId:user.id}}]});
-    const currBookings = [];
-    for(let spot of allSpots){
-        const bookings = spot.Bookings;
-        if(spot.SpotImage){
-        spot.dataValues.preview = spot.SpotImage[0].url
+    const allBooks = await Booking.findAll({
+        where: { userId: req.user.id },
+        include: [{ model: Spot, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] },
+         include: { model: SpotImage, where: { previewImage: true } } }]
+    });
+    const resArr = [];
+    for (let book of allBooks) {
+        let jsonBook = book.toJSON();
+        if (Array.isArray(jsonBook.Spot.SpotImages) && jsonBook.Spot.SpotImages.length > 0) {
+            let currImg = jsonBook.Spot.SpotImages[0];
+            jsonBook.Spot.preview = currImg.url;
+        } else {
+            jsonBook.Spot.preview = null
         }
-        for(let booking of bookings){
-            booking.dataValues.Spot = {
-                id: spot.id,
-                ownerId: spot.ownerId,
-                address: spot.address,
-                city: spot.city,
-                state: spot.state,
-                country: spot.country,
-                lat: spot.lat,
-                lng: spot.lng,
-                name: spot.name,
-                price: spot.price,
-                previewImage: spot.dataValues.preview
-            };
-            currBookings.push({
-                id:booking.id,
-                spotId:booking.spotId,
-                Spot: booking.dataValues.Spot,
-                userId:booking.userId,
-                startDate:booking.startDate,
-                endDate:booking.endDate,
-                createdAt:booking.createdAt,
-                updatedAt:booking.updatedAt
-            })
-        }
+        delete jsonBook.Spot.SpotImages;
+        resArr.push(jsonBook)
     }
-    return res.json({Bookings: currBookings})
+    return res.json({ Bookings: resArr })
 });
 //Edit a booking
 router.put('/:bookingId', requireAuth, validateBooking, existingBooking, isBookingOwner, validateDates, async(req,res,next)=>{
