@@ -92,11 +92,13 @@ router.post("/", requireAuth, validateSpot, async (req, res) => {
 
 //Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
+    req.body.previewImage = req.body.preview
     const data = {...req.body,spotId: req.params.spotId}
     const image = await SpotImage.create(data)
     delete image.createdAt
     delete image.updatedAt
-    return res.json(image)
+    
+    return res.json({id:image.id,url:image.url,preview:image.previewImage})
 });
 //Get all spots owned by the current user
 router.get('/current', requireAuth, async (req, res) => {
@@ -123,6 +125,7 @@ router.get("/:spotId", existingSpot, async (req, res) => {
             id: spotId,
         },
         include: [
+            { model: Review },
             {
                 model: SpotImage,
                 attributes: ["id", "url", "previewImage"],
@@ -132,7 +135,7 @@ router.get("/:spotId", existingSpot, async (req, res) => {
                 as: "Owner",
                 attributes: ["id", "firstName", "lastName"],
             },
-            { model: Review },
+            
         ],
     });
 
@@ -158,19 +161,42 @@ router.delete('/:spotId', requireAuth, existingSpot, isSpotOwner, async (req, re
 });
 //Get all bookings based on a spots Id
 router.get('/:spotId/bookings', requireAuth, existingSpot,async (req, res) => {
-    const {user, currSpot, params:{spotId}} = req;
+    const {user,params:{spotId}} = req;
         const spot = await Spot.findByPk(spotId, { attributes: ['id', 'ownerId'] });
-        if(!currSpot.ownerId !== user.id){
+        if(spot.ownerId !== user.id){
+            
             const bookings = await Booking.findAll({
             where: { spotId },attributes:['spotId','startDate','endDate']
             });
             return res.json({Bookings: bookings});
+        
         }else{
-            const bookings = await Booking.findAll({where:{spotId},
-            include:{model:User, attributes:['id','firstName','lastName']}})
-            return res.json({Bookings: bookings})
+            const bookings = await Booking.findAll({
+                where:{spotId},
+                include:[
+                    {model:User,
+                         attributes:['id','firstName','lastName']
+                    }
+            ]
+        });
+        const testArr = [];
+        for(let booking of bookings){
+            booking = {
+                User: booking.User,
+                id: booking.id,
+                spotId: booking.spotId,
+                userId: booking.userId,
+                startDate: booking.startDate,
+                endDate: booking.endDate,
+                createdAt: booking.createdAt,
+                updatedAt: booking.updatedAt
+            }
+            testArr.push(booking)
+        }
+            return res.json({Bookings:testArr})
         }
 });
+
 //Create a new booking based on a spot's id
 router.post('/:spotId/bookings', requireAuth, existingSpot, validateBooking, validateDates, async (req, res) => {
         let {user, currSpot, params:{spotId},body:{startDate,endDate}} = req;
@@ -180,13 +206,14 @@ router.post('/:spotId/bookings', requireAuth, existingSpot, validateBooking, val
             return res.status(403).json({message:'Forbidden'})
         }
         const newBooking = await Booking.create({
-            userId: user.id,
             spotId,
+            userId: user.id,
             startDate,
             endDate
         });
         return res.json(newBooking)
 });
+//Get all reviews by spotId
 router.get('/:spotId/reviews', existingSpot, async (req, res) => {
     const { spotId } = req.params;
 

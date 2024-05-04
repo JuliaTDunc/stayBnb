@@ -212,7 +212,7 @@ const existingBooking = async (req,res,next) => {
 
 const isBookingOwner = async (req,res,next) =>{
     if(req.route.methods.delete){
-        if(currBook.userId !== req.user.id && currBook.Spot.ownerId !== req.user.id){
+        if(req.currBook.userId !== req.user.id && req.currBook.Spot.ownerId !== req.user.id){
             const err = new Error("Forbidden")
             err.status = 403
             return next(err)

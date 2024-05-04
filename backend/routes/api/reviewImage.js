@@ -4,10 +4,10 @@ const {Review, ReviewImage} = require('../../db/models');
 const {requireAuth} = require('../../utils/auth');
 
 //Delete review image
-router.delete('/:imageId', requireAuth, async(req,res)=>{
-    const{user,params:{imageId}} = req;
+router.delete('/:reviewImageId', requireAuth, async(req,res)=>{
+    const{user,params:{reviewImageId}} = req;
     const img = await ReviewImage.findOne({
-        where:{id:imageId},
+        where:{id:reviewImageId},
         include:{model:Review}
     });
     if(!img){

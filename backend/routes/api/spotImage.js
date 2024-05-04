@@ -6,12 +6,13 @@ const {requireAuth} = require('../../utils/auth');
 //Delete spot image
 router.delete('/:spotImageId', requireAuth, async(req,res) =>{
     const {user,params:{spotImageId}} = req;
+   
     const img = await SpotImage.findOne({
         where:{id:spotImageId},
         include:{model:Spot}
     });
     if(!img){
-        return res.status(404).json({message:"Spot couldn't be found"});
+        return res.status(404).json({message:"Spot Image couldn't be found"});
     }else if(img.Spot.ownerId !== req.user.id){
         return res.status(403).json({message:'Forbidden'})
     }else{

@@ -32,9 +32,9 @@ const spotsArray = (spots) => {
             const avg = sum / num;
             spot.avgRating = avg;
         }
-        if(spot.SpotImage && spot.SpotImage.length > 0){
-        for(let image of spot.SpotImage){
-            if(image.preview === true){
+        if(spot.SpotImages && spot.SpotImages.length > 0){
+        for(let image of spot.SpotImages){
+            if(image.previewImage === true){
                 spot.previewImage = image.url;
                 break;
             }
@@ -42,7 +42,7 @@ const spotsArray = (spots) => {
     }
     
         delete spot.Reviews
-        delete spot.SpotImage
+        delete spot.SpotImages
     }
     return spots;
 };

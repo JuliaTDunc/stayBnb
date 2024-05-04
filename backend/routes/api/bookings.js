@@ -22,7 +22,9 @@ router.get('/current', requireAuth, async(req,res) => {
             jsonBook.Spot.preview = null
         }
         delete jsonBook.Spot.SpotImages;
-        resArr.push(jsonBook)
+        const jsonBookTest = { id: jsonBook.id, spotId: jsonBook.spotId, Spot: jsonBook.Spot, userId: jsonBook.userId, startDate: jsonBook.startDate, endDate: jsonBook.endDate, createdAt: jsonBook.createdAt, updatedAt: jsonBook.updatedAt}
+        
+        resArr.push(jsonBookTest)
     }
     return res.json({ Bookings: resArr })
 });

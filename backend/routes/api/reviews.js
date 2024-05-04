@@ -11,7 +11,7 @@ router.get('/current', requireAuth, async (req,res) =>{
         where:{userId: req.user.id},
         include:[{model:User,attributes:['id','firstName','lastName']},
         {model:Spot,attributes:{exclude:['createdAt','updatedAt','description']}, include: {model: SpotImage, where: {previewImage: true}}},
-        {model:ReviewImage,attributes:{exclude:['createdAt','updatedAt','reviewId']}}]
+        {model:ReviewImage,attributes:{exclude:['previewImage','createdAt','updatedAt','reviewId']}}]
     });
       const resArr = [];
     for(let rev of allRevs){
@@ -50,7 +50,7 @@ router.post('/:reviewId/images', requireAuth,existingReview,isReviewOwner,revImg
 //Edit a review
 router.put('/:reviewId', requireAuth, validateReview, existingReview, isReviewOwner, async(req,res) => {
     const {body: {review,stars},currReview} = req;
-    delete currReview.dataValues.ReviewImage;
+    delete currReview.dataValues.ReviewImages;
     await currReview.update({review,stars});
     return res.json(currReview);
 });
