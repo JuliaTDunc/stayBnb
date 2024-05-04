@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
     },
     lng: {
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT,
     },
     name: {
       type: DataTypes.STRING,

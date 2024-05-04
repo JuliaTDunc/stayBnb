@@ -37,7 +37,17 @@ router.put('/:bookingId', requireAuth, validateBooking, existingBooking, isBooki
         return next(err);
     }else{
         await currBook.update({startDate,endDate});
-        return res.json(currBook);
+        //res obj for desired response format -- was returning whole associated spot object
+        const resBook = {
+            id:currBook.id,
+            spotId: currBook.spotId,
+            userId: currBook.userId,
+            startDate: currBook.startDate,
+            endDate: currBook.endDate,
+            createdAt: currBook.createdAt,
+            updatedAt: currBook.updatedAt
+        }
+        return res.json(resBook);
     }
 });
 //Delete booking

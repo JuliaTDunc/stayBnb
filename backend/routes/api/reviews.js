@@ -13,9 +13,14 @@ router.get('/current', requireAuth, async (req,res) =>{
         {model:Spot,attributes:{exclude:['createdAt','updatedAt','description']}, include: {model: SpotImage, where: {previewImage: true}}},
         {model:ReviewImage,attributes:{exclude:['previewImage','createdAt','updatedAt','reviewId']}}]
     });
+    
+    
       const resArr = [];
     for(let rev of allRevs){
         let jsonRev = rev.toJSON();
+        if(rev.ReviewImages.length < 1){
+          delete jsonRev.ReviewImages
+        }
         if(Array.isArray(jsonRev.Spot.SpotImages) && jsonRev.Spot.SpotImages.length > 0){
         let currImg = jsonRev.Spot.SpotImages[0];
         jsonRev.Spot.preview = currImg.url;

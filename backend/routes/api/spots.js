@@ -1,5 +1,6 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
+const { Op } = require("sequelize");
 const {validateSpot, validateQuery, existingSpot, isSpotOwner, validateReview, validateBooking, validateDates} = require('../../utils/validation');
 const { requireAuth } = require('../../utils/auth');
 const { Spot, Review, User, ReviewImage, SpotImage, Booking, Sequelize } = require('../../db/models');
@@ -36,14 +37,14 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
 
     return where;
 };
-
+////Seems validate Query isn't working
     router.get("/", validateQuery, async (req, res) => {
         let {
             page = 1,
             size = 20,
             minLat,
             maxLat,
-            minLng,
+            minLng,     
             maxLng,
             minPrice,
             maxPrice,
@@ -51,8 +52,8 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
 
         page = Number(page);
         size = Number(size);
-        if (page === 0) page = 1;
-        if (size === 0) size = 20;
+        if (page <= 0) page = 1;
+        if (size <= 0) size = 20;
 
         const where = setQueries(minLat, maxLat, minLng, maxLng, minPrice, maxPrice);
 
@@ -65,7 +66,7 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
 
         const formattedSpots = spotsArray(spotData);
 
-        return res.json({ Spots: formattedSpots });
+        return res.json({ Spots: formattedSpots, page, size });
     });
 //Create a spot
 router.post("/", requireAuth, validateSpot, async (req, res) => {
@@ -140,8 +141,28 @@ router.get("/:spotId", existingSpot, async (req, res) => {
     });
 
     const formattedSpot = spotData(currSpot);
+    //res obj for desired response format
+    const resSpot = {
+        id:formattedSpot.id,
+        ownerId: formattedSpot.ownerId,
+        address: formattedSpot.address,
+        city: formattedSpot.city,
+        state: formattedSpot.state,
+        country: formattedSpot.country,
+        lat: formattedSpot.lat,
+        lng: formattedSpot.lng,
+        name: formattedSpot.name,
+        description: formattedSpot.description,
+        price: formattedSpot.price,
+        createdAt: formattedSpot.createdAt,
+        updatedAt: formattedSpot.updatedAt,
+        numReviews: formattedSpot.numReviews,
+        avgStarRating: formattedSpot.avgRating,
+        SpotImages: formattedSpot.SpotImages,
+        Owner: formattedSpot.Owner
+    }
 
-    return res.json(formattedSpot);
+    return res.json(resSpot);
 });
 //Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, existingSpot, isSpotOwner, async (req, res, next) => {
@@ -150,7 +171,23 @@ router.put('/:spotId', requireAuth, validateSpot, existingSpot, isSpotOwner, asy
         await currSpot.update({
             address, city, state, country, lat, lng, name, description, price
         })
-        res.status(200).json(currSpot);
+        //res obj for desired response format
+        const resSpot = {
+            id:currSpot.id,
+            ownerId: currSpot.ownerId,
+            address: currSpot.address,
+            city: currSpot.city,
+            state: currSpot.state,
+            country: currSpot.country,
+            lat: currSpot.lat,
+            lng: currSpot.lng,
+            name: currSpot.name,
+            description: currSpot.description,
+            price: currSpot.price,
+            createdAt: currSpot.createdAt,
+            updatedAt: currSpot.updatedAt
+        }
+        res.status(200).json(resSpot);
 });
 //Delete a spot
 router.delete('/:spotId', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
@@ -211,7 +248,17 @@ router.post('/:spotId/bookings', requireAuth, existingSpot, validateBooking, val
             startDate,
             endDate
         });
-        return res.json(newBooking)
+        //res obj for desired response format
+        const resBook = {
+            id:newBooking.id,
+            spotId: newBooking.spotId,
+            userId: newBooking.userId,
+            startDate: newBooking.startDate,
+            endDate: newBooking.endDate,
+            createdAt: newBooking.createdAt,
+            updatedAt: newBooking.updatedAt
+        }
+        return res.json(resBook)
 });
 //Get all reviews by spotId
 router.get('/:spotId/reviews', existingSpot, async (req, res) => {
