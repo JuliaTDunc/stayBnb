@@ -33,8 +33,6 @@ router.get('/current', requireAuth, async (req,res) =>{
     return res.json({Reviews: resArr})
 });
 const revImgNum = async (req, res, next) => {
-  //let count = req.currReview.ReviewImages.length
-  //return res.json(count)
   if (req.currReview.ReviewImages.length >= 10) {
     const err = new Error(
       "Maximum number of images for this resource was reached"
