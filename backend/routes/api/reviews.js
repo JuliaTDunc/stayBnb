@@ -18,7 +18,7 @@ router.get('/current', requireAuth, async (req,res) =>{
       const resArr = [];
     for(let rev of allRevs){
         let jsonRev = rev.toJSON();
-        if(rev.ReviewImages.length < 1){
+        if(jsonRev.ReviewImages.length < 1){
           delete jsonRev.ReviewImages
         }
         if(Array.isArray(jsonRev.Spot.SpotImages) && jsonRev.Spot.SpotImages.length > 0){
