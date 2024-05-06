@@ -21,6 +21,7 @@ router.get('/current', requireAuth, async (req,res) =>{
         if(jsonRev.ReviewImages.length < 1){
           delete jsonRev.ReviewImages
         }
+        
         if(Array.isArray(jsonRev.Spot.SpotImages) && jsonRev.Spot.SpotImages.length > 0){
         let currImg = jsonRev.Spot.SpotImages[0];
         jsonRev.Spot.preview = currImg.url;

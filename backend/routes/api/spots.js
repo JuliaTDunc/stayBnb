@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 const {validateSpot, validateQuery, existingSpot, isSpotOwner, validateReview, validateBooking, validateDates} = require('../../utils/validation');
 const { requireAuth } = require('../../utils/auth');
 const { Spot, Review, User, ReviewImage, SpotImage, Booking, Sequelize } = require('../../db/models');
@@ -8,9 +8,9 @@ const { validator } = require('sequelize/lib/utils/validator-extras');
 const {validationResult, check} = require('express-validator');
 const {spotData, spotsArray} = require('../../utils/spotData')
 
+
 const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
     const where = {};
-
     if (minLat && maxLat) {
         where.lat = { [Op.gte]: minLat, [Op.lte]: maxLat };
     } else if (minLat) {
@@ -32,16 +32,16 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
     } else if (minPrice) {
         where.price = { [Op.gte]: minPrice };
     } else if (maxPrice) {
-        where.price = { [Op.lte]: maxPrice };
+        where.price = {[Op.lte]: maxPrice};
     }
 
     return where;
-};
-////Seems validate Query isn't working
+}
     router.get("/", validateQuery, async (req, res) => {
+ 
         let {
-            page = 1,
-            size = 20,
+            page,
+            size,
             minLat,
             maxLat,
             minLng,     
@@ -49,21 +49,18 @@ const setQueries = (minLat, maxLat, minLng, maxLng, minPrice, maxPrice) => {
             minPrice,
             maxPrice,
         } = req.query;
-
         page = Number(page);
         size = Number(size);
-        if (page <= 0) page = 1;
-        if (size <= 0) size = 20;
+        if (!page || page <= 0) page = 1;
+        if (!size || size <= 0) size = 20;
 
         const where = setQueries(minLat, maxLat, minLng, maxLng, minPrice, maxPrice);
-
         const spotData = await Spot.findAll({
             where,
             limit: size,
             offset: size * (page - 1),
             include: [{ model: Review }, { model: SpotImage }],
         });
-
         const formattedSpots = spotsArray(spotData);
 
         return res.json({ Spots: formattedSpots, page, size });

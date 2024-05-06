@@ -1,5 +1,7 @@
-const { validationResult, check } = require('express-validator');
+const { validationResult, check, query } = require('express-validator');
 const {Spot, SpotImage, Review, ReviewImage, Booking} = require('../db/models');
+
+
 const handleValidationErrors = (req, _res, next) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -48,6 +50,7 @@ const validateSignup = [
     .withMessage("Password must be 6 characters or more."),
     handleValidationErrors
 ];
+
 const validateQuery = [
     check("page")
     .optional({nullable:true, checkfalsy: true})
@@ -59,30 +62,30 @@ const validateQuery = [
     .withMessage("Size must be greater than or equal to 1"),
     check("maxLat")
     .optional({nullable:true, checkfalsy: true})
-    .isFloat({max:90})
-    .withMessage("Maximum latitude is invalide"),
+        .isFloat({ gte: -90, lte: 90 })
+    .withMessage("Maximum latitude is invalid"),
     check("minLat")
     .optional({nullable:true, checkfalsy:true})
-    .isFloat({min: -90})
+        .isFloat({ gte: -90, lte: 90 })
     .withMessage("Minimum latitude is invalid"),
     check("maxLng")
         .optional({ nullable: true, checkfalsy: true })
-        .isFloat({ max: 180 })
-        .withMessage("Maximum longitude is invalide"),
+        .isFloat({ gte: -180, lte: 180 })
+        .withMessage("Maximum longitude is invalid"),
     check("minLng")
         .optional({ nullable: true, checkfalsy: true })
-        .isFloat({ min: -180 })
+        .isFloat({ gte: -180, lte: 180 })
         .withMessage("Minimum longitude is invalid"),
     check("minPrice")
         .optional({ nullable: true, checkfalsy: true })
-        .isFloat({ min: 0 })
+        .isFloat({ min: 1 })
         .withMessage("Minimum price must be greater than or equal to 0"),
     check("maxPrice")
         .optional({ nullable: true, checkfalsy: true })
         .isFloat({ min: 0 })
-        .withMessage("Maximum price must be greater than or equal to 0")
-]
-
+        .withMessage("Maximum price must be greater than or equal to 0"),
+        handleValidationErrors
+];
 const validateSpot = [
     check('address')
         .exists({ checkFalsy: true })
