@@ -245,6 +245,10 @@ const dateCompare = (startDate, endDate, currStart, currEnd) =>{
         errors.startDate = "Start date conflicts with an existing booking";
         errors.endDate = "End date conflicts with an existing booking"
     }
+    if(startDate <= currStart && endDate >= currEnd){
+        errors.startDate = "Start date conflicts with an existing booking";
+        errors.endDate = "End date conflicts with an existing booking"
+    }
     return errors;
 }
 /////////DATAVALUEESSSSS?????////////////////////////////////////////////////////////////////////////////////////
