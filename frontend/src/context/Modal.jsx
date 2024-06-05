@@ -1,4 +1,4 @@
-import {useRef, createContext, useState, useCallback, useContext} from 'react';
+import {useRef, createContext, useState, useContext} from 'react';
 import ReactDOM from 'react-dom';
 import './Modal.css';
 
@@ -31,7 +31,7 @@ export function ModalProvider({children}){
             <div ref={modalRef} />
         </>
     )
-};
+}
 
 export function Modal(){
     const {modalRef, modalContent, closeModal} = useContext(ModalContext);

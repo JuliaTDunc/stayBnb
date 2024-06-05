@@ -11,7 +11,7 @@ function OpenModalButton({
         if(typeof onButtonClick === 'function')
             onButtonClick();
     };
-    const Greeting = () => {
+    /*const Greeting = () => {
         return (
             <OpenModalButton
                 buttonText="Greeting"
@@ -20,7 +20,7 @@ function OpenModalButton({
                 onModalClose={() => console.log("Greeting completed")}
             />
         );
-    };
+    };*/
     return <button onClick={onClick}>{buttonText}</button>
 }
 

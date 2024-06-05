@@ -10,9 +10,9 @@ import * as sessionActions from './store/csrf';
 
 const store = configureStore();
 
-/*if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   window.store = store;
-}*/
+}
 
 if (import.meta.env.MODE !== 'production') {
   restoreCSRF();
