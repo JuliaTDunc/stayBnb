@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as sessionActions from '../../store/session';
 import { useDispatch } from 'react-redux';
 import { useModal } from '../../context/Modal';
@@ -10,6 +10,11 @@ function LoginFormModal() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});
     const { closeModal } = useModal();
+    const [isFormValid, setIsFormValid] = useState('false');
+
+    useEffect(() => {
+        setIsFormValid(credential.length >= 4 && password.length >= 6);
+    }, [credential, password])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,33 +28,38 @@ function LoginFormModal() {
                 }
             });
     };
+    const handleDemo = () => {
+        return dispatch(sessionActions.login({credential:'demo', password:'password'}))
+        .then(closeModal)
+    }
 
     return (
         <>
             <h1>Log In</h1>
             <form onSubmit={handleSubmit}>
-                <label>
-                    Username or Email
+                
                     <input
                         type="text"
+                        placeholder='Username or Email'
                         value={credential}
                         onChange={(e) => setCredential(e.target.value)}
                         required
                     />
-                </label>
-                <label>
+               
                     Password
                     <input
                         type="password"
+                        placeholder='Password'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                </label>
+                
                 {errors.credential && (
-                    <p>{errors.credential}</p>
+                    <p className='error'>{errors.credential}</p>
                 )}
-                <button type="submit">Log In</button>
+                <button type="submit" disabled={!isFormValid}>Log In</button>
+                <h3 onClick={handleDemo} className='demo-user'>Demo User</h3>
             </form>
         </>
     );

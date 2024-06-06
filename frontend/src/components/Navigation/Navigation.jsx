@@ -14,7 +14,8 @@ function Navigation({isLoaded}) {
     if(sessionUser){ 
         sessionLinks =  (
         <li>
-            <ProfileButton user={sessionUser} />
+            <ProfileButton user={sessionUser}
+            userFirst={sessionUser.firstName} />
         </li>
         );
         } else {
@@ -22,12 +23,14 @@ function Navigation({isLoaded}) {
             <>
         <li>
             <OpenModalButton
+           
             buttonText='Log In'
             modalComponent={<LoginFormModal/>}
             />
         </li>
         <li>
             <OpenModalButton
+       
             buttonText='Sign Up'
             modalComponent={<SignupFormModal/>}
             />
@@ -38,8 +41,8 @@ function Navigation({isLoaded}) {
 
     return (
     <ul>
-        <li>
-            <NavLink to="/">Home</NavLink>
+        <li style={{textAlign: 'left'}}>
+            <NavLink to="/">StayBnb</NavLink>
         </li>
         {isLoaded && sessionLinks}
     </ul>
