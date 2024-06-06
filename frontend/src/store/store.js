@@ -1,8 +1,13 @@
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import sessionReducer from './session';
+import spotReducer from './spots';
+import reviewReducer from './reviews';
+
 const rootReducer = combineReducers({
-  session: sessionReducer
+  session: sessionReducer,
+  spots: spotReducer,
+  reviews: reviewReducer
 });
 
 let enhancer;
@@ -16,7 +21,7 @@ if (import.meta.env.MODE === "production") {
 }
 
 const configureStore = (preloadedState) => {
-  return createStore(rootReducer, preloadedState, enhancer);
+  return createStore(rootReducer,spotReducer, reviewReducer, preloadedState, enhancer);
 };
 
 export default configureStore;
