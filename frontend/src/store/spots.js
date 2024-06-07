@@ -1,5 +1,5 @@
 import {csrfFetch} from './csrf';
-import {createSelector} from reselect;
+import {createSelector} from 'reselect';
 
 const LOAD_SPOTS = 'spots/loadSpots'
 const SPOT_DETAILS = 'spots/spotDetails'
@@ -18,8 +18,10 @@ const spotDetails = (spotId) => {
     }
 }
 const loadReviews = (spotId) => {
+    return {
     type: LOAD_REVIEWS,
     payload: spotId
+    }
 }
 
 export const getSpots = () => async(dispatch) => {
@@ -39,8 +41,8 @@ export const getReviews = (spotId) => async(dispatch) => {
 
 const initialState = {
     loadSpots: {},
-    currSpot = null,
-    reviews = {}
+    currSpot: null,
+    reviews: {}
 }
 
 const spotReducer = (state= initialState, action) => {
@@ -57,7 +59,7 @@ const spotReducer = (state= initialState, action) => {
         }
         case LOAD_REVIEWS: {
             const newState = {...state, reviews: {}}
-            ation.payload.Reviews.forEach(review => {
+            action.payload.Reviews.forEach(review => {
                 newState.reviews[review.id] = review;
             })
             return newState;
