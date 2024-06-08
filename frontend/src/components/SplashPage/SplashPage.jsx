@@ -1,13 +1,12 @@
 import {useDispatch, useSelector} from 'react-redux';
 import { useEffect } from 'react';
 import { getSpots } from '../../store/spots';
-import {SpotsTile} from '../SpotsTile/SpotsTile';
+import SpotsTile from '../SpotsTile/SpotsTile';
 import './SplashPage.css';
 
 const SplashPage = () => {
     const dispatch = useDispatch();
     const spots = useSelector(state => state.spots.loadSpots);
-
     useEffect(() => {
         dispatch(getSpots())
     },[dispatch]);

@@ -3,11 +3,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useParams } from "react-router-dom";
 import {FaStar} from 'react-icons/fa';
 import {LuDot} from 'react-icons/lu';
-import {getSpots} from '../../store/spots';
-import './SpotDetails'
+import {getSpotDetails,getReviews,selectReviewsArray} from '../../store/spots';
+import './SpotDetails.css'
 
 const SpotsDetails = () => {
-    const {spotId} = useParams;
+    const {spotId} = useParams();
     const dispatch = useDispatch();
     const spot = useSelector(state => state.spots.currSpot);
     const sessionUser = useSelector(state => state.session.user);
@@ -16,33 +16,34 @@ const SpotsDetails = () => {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        dispatch(getSpots(spotId))
+        dispatch(getSpotDetails(spotId))
         .then(()=> setIsLoaded(true));
-        dispatch(fetchReviews(spotId))
+        dispatch(getReviews(spotId))
         .then(() => setIsLoaded(true));
     },[dispatch,spotId]);
 
     const handleReserve = () => {
         return alert('Change this in SpotDeatils.jsx')
     }
-    const isOwner = sessionUser && spot && sessionUser.id === spot.Owner.id;
+   
+    const isOwner = sessionUser && spot && sessionUser.id === spot.ownerId;
     const hasReviews = reviews.length > 0;
 
     return isLoaded ? (
         <div>
             <h2>{spot.name}</h2>
             <h3>{spot.city}, {spot.state}, {spot.country}</h3>
-            <div className='details-image-container'>
-                <img src={spot.SpotImages[0].url} className='details-image-main' />
+            <div className='image-det-container'>
+                <img src={spot.SpotImages[0].url} className='first-img-det' />
                 <div>
                     {spot.SpotImages.slice(1).map(image => (
-                        <img key={image.id} src={image.url} className='details-image-secondary' />
+                        <img key={image.id} src={image.url} className='second-img-det' />
                     ))}
                 </div>
             </div>
             <div className='details-container'>
                 <div>
-                    <h2>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h2>
+                    <h2>Hosted by {spot.ownerId.firstName} {spot.ownerId.lastName}</h2>
                     <p>{spot.description}</p>
                 </div>
                 <div className='details-price-reviews'>
@@ -101,7 +102,7 @@ const SpotsDetails = () => {
             </div>
         </div>
     ) : (
-        <div>Loding...</div>
+        <div>Loading...</div>
     )
     
 }

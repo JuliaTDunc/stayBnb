@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-import './SportsTile.css';
+import './SpotsTile.css'
 
 const SpotsTile = ({spot}) => {
     return (
@@ -12,7 +12,7 @@ const SpotsTile = ({spot}) => {
                         <p>{spot.city},{spot.state}</p>
                         {spot.avgRating ? (
                             <p><FaStar/>{(spot.avgRating.toFixed(1))}</p>
-                        ): ('New!')}
+                        ): ('Message-SpotTile.jsx')}
                     </div>
                     <p>{spot.price} /night</p>
                 </div>

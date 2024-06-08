@@ -17,6 +17,7 @@ const spotDetails = (spotId) => {
         payload: spotId
     }
 }
+
 const loadReviews = (spotId) => {
     return {
     type: LOAD_REVIEWS,
@@ -28,7 +29,7 @@ export const getSpots = () => async(dispatch) => {
     const res = await csrfFetch('/api/spots');
     if(res.ok){
         const data = await res.json();
-        dispatch(spotDetails(data))
+        dispatch(loadSpots(data))
     }
 }
 export const getReviews = (spotId) => async(dispatch) => {
@@ -36,6 +37,13 @@ export const getReviews = (spotId) => async(dispatch) => {
     if(res.ok){
         const data = await res.json();
         dispatch(loadReviews(data))
+    }
+}
+export const getSpotDetails = (spotId) => async(dispatch) => {
+    const res = await csrfFetch(`/api/spots${spotId}`);
+    if(res.ok) {
+        const data = await res.json();
+        dispatch(spotDetails(data));
     }
 }
 
