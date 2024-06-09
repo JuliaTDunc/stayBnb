@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import SignupFormModal from './components/SignupPage/SignupFormModal';
 import SpotDetails from './components/SpotDetails/SpotDetails';
 import SplashPage from './components/SplashPage/SplashPage';
+import NewSpot from './components/NewSpot/NewSpot';
 import  Navigation  from './components/Navigation/Navigation';
 import * as sessionActions from './store/session';
 
@@ -41,13 +42,13 @@ const router = createBrowserRouter([
         element: <SignupFormModal />
       },
       {
-        path: '/spots/:id',
+        path: '/spots/:spotId',
         element:<SpotDetails/>
       },
-      /*{
+      {
         path: '/spots/new',
-        element: <CreateSpot/>
-      }*/
+        element: <NewSpot/>
+      }
     ]
   }
 ]);

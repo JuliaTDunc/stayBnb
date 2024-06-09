@@ -40,7 +40,7 @@ export const getReviews = (spotId) => async(dispatch) => {
     }
 }
 export const getSpotDetails = (spotId) => async(dispatch) => {
-    const res = await csrfFetch(`/api/spots${spotId}`);
+    const res = await csrfFetch(`/api/spots/${spotId}`);
     if(res.ok) {
         const data = await res.json();
         dispatch(spotDetails(data));

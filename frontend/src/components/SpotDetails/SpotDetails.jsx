@@ -12,7 +12,6 @@ const SpotsDetails = () => {
     const spot = useSelector(state => state.spots.currSpot);
     const sessionUser = useSelector(state => state.session.user);
     const reviews = useSelector(selectReviewsArray);
-
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ const SpotsDetails = () => {
     },[dispatch,spotId]);
 
     const handleReserve = () => {
-        return alert('Change this in SpotDeatils.jsx')
+        return alert('Change this in SpotDetails.jsx')
     }
    
     const isOwner = sessionUser && spot && sessionUser.id === spot.ownerId;
