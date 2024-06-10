@@ -28,9 +28,17 @@ function LoginFormModal() {
                 }
             });
     };
-    const handleDemo = () => {
-        return dispatch(sessionActions.login({credential:'demo', password:'password'}))
-        .then(closeModal)
+    const handleDemo = async(e) => {
+        e.preventDefault();
+        try{
+         dispatch(sessionActions.login({credential:'demo@email.com', password:'password123'}));
+         closeModal();
+        } catch(res){
+            const data = await res.json();
+            if(data && data.errors){
+                setErrors(data.errors)
+            }
+        }
     }
 
     return (

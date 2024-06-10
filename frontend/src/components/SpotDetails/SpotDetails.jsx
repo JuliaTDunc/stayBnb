@@ -22,14 +22,14 @@ const SpotsDetails = () => {
     },[dispatch,spotId]);
 
     const handleReserve = () => {
-        return alert('Change this in SpotDetails.jsx')
+        return alert('Feature Coming Soon...')
     }
    
     const isOwner = sessionUser && spot && sessionUser.id === spot.ownerId;
     const hasReviews = reviews.length > 0;
 
     return isLoaded ? (
-        <div>
+        <div className ='full-spot'>
             <h2>{spot.name}</h2>
             <h3>{spot.city}, {spot.state}, {spot.country}</h3>
             <div className='image-det-container'>
@@ -42,11 +42,11 @@ const SpotsDetails = () => {
             </div>
             <div className='details-container'>
                 <div>
-                    <h2>Hosted by {spot.ownerId.firstName} {spot.ownerId.lastName}</h2>
+                    <h2>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h2>
                     <p>{spot.description}</p>
                 </div>
                 <div className='details-price-reviews'>
-                    <h2>${spot.price} night</h2>
+                    <h2>${spot.price} /night</h2>
                     <div>
                         {spot.avgStarRating ? (
                             <p className="details-spot-rating"><FaStar /> {(spot.avgStarRating).toFixed(1)}</p>
@@ -57,7 +57,7 @@ const SpotsDetails = () => {
                             spot.numReviews > 1 ? ('reviews') : ('review')
                         }</p>
                     ) : (
-                        <p className="details-spot-rating">New!</p>
+                        <p className="new-rating">New!</p>
                     )}
                     <button onClick={handleReserve}>Reserve</button>
                 </div>

@@ -12,12 +12,12 @@ const NewSpot = () => {
 
 
 return (
-    <div>
-        <h1>Create a New Spot</h1>
+    <div className='new-form'>
+        <h3 className='form-header'>Create a new Spot</h3>
         <form>
             <section>
-                <h3>Where's your place located?</h3>
-                <h6>Guests will only get your exact address once they booked a reservation</h6>
+                <h4 className="form-header">Where's your place located?</h4>
+                <h5 className="form-header">Guests will only get your exact address once they booked a<br/>reservation.</h5>
                 <label> Street Address
                     <input type="text"
                     value={address}
@@ -52,26 +52,26 @@ return (
                 </label>
             </section>
             <section>
-                <h3>Describe your place to guests</h3>
+                <h4>Describe your place to guests</h4>
                 <p>Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood.</p>
                 <textarea placeholder="Please write at least 30 characters." required/>
             </section>
             <section>
-                <h3>Create a title for your spot</h3>
+                <h4>Create a title for your spot</h4>
                 <p>Catch guests' attention with a spot title that highlights what makes your place special.</p>
                 <label>
                     <input type="text" placeholder="Name of your spot" required/>
                 </label>
             </section>
             <section>
-                <h2>Set a base price for your spot</h2>
+                <h4>Set a base price for your spot</h4>
                 <p>Competitive pricing can help your listing stand out and rank higher in search results.</p>
                 <label>
                     <input type="number" placeholder="Price per night (USD)" required />
                 </label>
             </section>
             <section>
-                <h3>Liven up your spot with photos.</h3>
+                <h4>Liven up your spot with photos.</h4>
                 <p>Submit a link to at least one photo to publish your spot.</p>
                 <label>
                     <input type="text" placeholder="Preview Image URL" required />

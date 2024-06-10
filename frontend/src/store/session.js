@@ -4,6 +4,7 @@ const REMOVE_USER = 'session/removeUser';
 
 //session REDUCER
 const setUser = (user) => {
+
     return {
         type: SET_USER,
         payload: user
@@ -14,14 +15,9 @@ const removeUser = () => {
         type: REMOVE_USER
     }
 }
-export const restoreUser = () => async (dispatch) => {
-    const response = await csrfFetch("/api/session");
-    const data = await response.json();
-    dispatch(setUser(data.user));
-    return response;
-};
+
 export const login = (user) => async (dispatch) => {
-    const {credential, password} = user;
+    const { credential, password } = user;
     const response = await csrfFetch('/api/session', {
         method: 'POST',
         body: JSON.stringify({
@@ -32,16 +28,6 @@ export const login = (user) => async (dispatch) => {
     const data = await response.json();
     dispatch(setUser(data.user));
     return response;
-}
-const initialState = {user:null};
-const sessionReducer = (state = initialState, action) => {
-    switch(action.type){
-        case SET_USER:
-            return {...state, user: action.payload};
-            case REMOVE_USER:
-                return {...state, user:null};
-                default: return state;
-    }
 }
 export const signup = (user) => async (dispatch) => {
     const {username, firstName, lastName, email, password} = user;
@@ -66,6 +52,23 @@ export const logout = () => async (dispatch) => {
     dispatch(removeUser());
     return res;
 }
+const initialState = { user: null };
+
+const sessionReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case SET_USER:
+            return { ...state, user: action.payload };
+        case REMOVE_USER:
+            return { ...state, user: null };
+        default: return state;
+    }
+}
+export const restoreUser = () => async (dispatch) => {
+    const response = await csrfFetch("/api/session");
+    const data = await response.json();
+    dispatch(setUser(data.user));
+    return response;
+};
 /*should return {
 user: {
     id,

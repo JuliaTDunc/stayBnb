@@ -1,3 +1,11 @@
-.tile{
-    background-color: red;
+.spot-tile{
+    border: 1px solid orange;
+    color:black;
+}
+.spot-tile-details{
+    border: 1px solid green;
+}
+.c-stars{
+    border: 1px solid blue;
+    
 }
