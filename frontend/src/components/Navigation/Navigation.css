@@ -1,5 +1,6 @@
 .nav-bar{
-    border:1px solid blue;
+    border:1px solid blue; 
+    border-bottom: 1.5px solid lightgray;
     display: flex;
     align-items: center;
     justify-content: space-between;

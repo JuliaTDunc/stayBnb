@@ -7,6 +7,7 @@ import SignupFormModal from './components/SignupPage/SignupFormModal';
 import SpotDetails from './components/SpotDetails/SpotDetails';
 import SplashPage from './components/SplashPage/SplashPage';
 import NewSpot from './components/NewSpot/NewSpot';
+import ManageSpots from './components/ManageSpots/ManageSpots';
 import  Navigation  from './components/Navigation/Navigation';
 import * as sessionActions from './store/session';
 
@@ -48,7 +49,11 @@ const router = createBrowserRouter([
       {
         path: '/spots/new',
         element: <NewSpot/>
-      }
+      },
+      {
+        path:'/spots/manage',
+        element: <ManageSpots/>
+      },
     ]
   }
 ]);

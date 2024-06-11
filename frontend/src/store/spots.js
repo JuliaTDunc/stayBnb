@@ -47,6 +47,7 @@ export const getSpotDetails = (spotId) => async(dispatch) => {
     }
 }
 
+
 const initialState = {
     loadSpots: {},
     currSpot: null,

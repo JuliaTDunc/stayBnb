@@ -10,6 +10,9 @@ const NewSpot = () => {
     const [state,setState] = useState("");
     const [country,setCountry] = useState("");
 
+    const handleNewSpotSubmit = () => {
+        
+    }
 
 return (
     <div className='new-form'>
@@ -81,7 +84,7 @@ return (
                     <input type="text" placeholder="Image URL"/>
                 </label>
             </section>
-            <button>Create Spot</button>
+            <button onClick={handleNewSpotSubmit}>Create Spot</button>
         </form>
     </div>
 )
