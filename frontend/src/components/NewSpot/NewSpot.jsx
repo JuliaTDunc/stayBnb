@@ -2,7 +2,7 @@ import "./NewSpot.css";
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSpots, getSpotDetails } from "../../store/spots"; // Import the appropriate action
+import { getSpots, getSpotDetails, updateUserSpots, createNewSpot, createNewImage } from "../../store/spots"; // Import the appropriate action
 import { ValidationError } from "sequelize";
 
 const NewSpot = () => {
@@ -10,6 +10,7 @@ const NewSpot = () => {
     const { spotId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const spotRefs = useRef({});
 
     const spot = useSelector((state) => state.spots.currSpot);
 
@@ -70,32 +71,34 @@ const NewSpot = () => {
         e.preventDefault();
         const spotData = { ...formData, price: parseFloat(formData.price) };
         try {
-            let res;
             if (spotId) {
-                res = await fetch(`/api/spots/${spotId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(spotData)
-                });
+                const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
+                navigate(`/spots/${updatedSpot.id}`)
             } else {
-                res = await fetch('/api/spots', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(spotData)
-                });
+                const newSpot = await dispatch(createNewSpot(spotData));
+                const images = [
+                    previewImage,
+                    secondImg,
+                    thirdImg,
+                    fourthImg,
+                    fifthImg,
+                ];
+                const displayPreview = images[0] ? 'true' : 'false';
+                const imgTest = images.map((u) => {
+                    const payload = {
+                        u,
+                        displayPreview
+                    }
+                    return dispatch(createNewImage(newSpot.id, payload))
+                })
+                await Promise.all(imgTest, payload);
+                navigate(`/spots/${newSpot.id}`)
             }
-            if (!res.ok) {
-                throw new Error('Failed to save spot');
+        } catch (res) {
+            const data = await res.json();
+            if(data && data.errors){
+                setErrors(data.errors)
             }
-            const savedSpot = await res.json();
-            console.log(savedSpot);
-            navigate(`/spots/${savedSpot.id}`);
-        } catch (error) {
-            console.error(error);
         }
     };
 
