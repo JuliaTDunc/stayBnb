@@ -14,17 +14,17 @@ module.exports = {
       await SpotImage.bulkCreate([
         {
           spotId: 1,
-          url: 'imagefirstspot.com',
+          url: 'imahttps://www.creativefabrica.com/wp-content/uploads/2022/09/27/Wes-Anderson-Garden-Architecture-39397614-1.pngefirstspot.com',
           previewImage: true
         },
         {
           spotId: 2,
-          url: 'imagesecondspot.com',
+          url: 'https://metro.co.uk/wp-content/uploads/2024/05/SEC_203164879-0b12.jpg?quality=90&strip=all&zoom=1&resize=480%2C360',
           previewImage: true
         },
         {
           spotId: 3,
-          url: 'imagesthirdspot.com',
+          url: 'https://mir-s3-cdn-cf.behance.net/projects/404/798c04193743989.Y3JvcCwxNDAwLDEwOTUsMCwyMA.png',
           previewImage: true
         },
       ], { validate: true, returning: false });
