@@ -10,6 +10,15 @@
     border: 2px solid green;
 }
 .details-price-rating{
-    border: 1px solid pink;
+    border: 5px solid orangered;
 
+}
+.new-rating{
+    border: 5px solid orangered;
+}
+.details-price-reviews{
+   background-color: pink;
+}
+.reviews-comments-container{
+    background-color: greenyellow;
 }

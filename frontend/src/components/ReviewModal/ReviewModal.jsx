@@ -3,10 +3,10 @@ import {useDispatch} from 'react-redux';
 import {useModal} from '../../context/Modal';
 import {getReviews, createNewReview,getSpotDetails} from '../../store/spots';
 import { FaStar } from 'react-icons/fa';
-import './ReviewForm.css'
+import './ReviewModal.css'
 
 const ReviewModal = ({spotId}) => {
-    const[review,setReview] = uesState('');
+    const[review,setReview] = useState('');
     const [stars,setStars] = useState('');
     const [errors, setErrors] = useState('');
     const [disableButton, setDisableButton] = useState(true);

@@ -30,10 +30,10 @@ const NewSpot = () => {
 
     const validationErrors = () => {
         const newErr = {};
-        if (!country) newErr.country = 'Country is required';
         if (!address) newErr.address = 'Address is required';
         if (!city) newErr.city = 'City is required';
         if (!state) newErr.state = 'State is required';
+        if (!country) newErr.country = 'Country is required';
         if (description.length < 30) newErr.description = 'Description needs 30 or more characters';
         if (description.length > 255) newErr.description = 'Description must be 255 characters or less';
         if (!name) newErr.name = 'Name is required';
@@ -93,10 +93,12 @@ const NewSpot = () => {
         }
 
         if (Object.keys(formErrors).length > 0) {
+            
             setErrors(formErrors);
             const firstErrorField = Object.keys(formErrors)[0];
             spotRef.current[firstErrorField].scrollIntoView({ behavior: 'smooth' });
         } else {
+            console.log('HERE?')
             const spotData = {
                 country,
                 address,
@@ -108,15 +110,20 @@ const NewSpot = () => {
             };
             try {
                 if (spotId) {
+                  
                    
                     const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
                    
                     navigate(`/spots/${updatedSpot.id}`);
                 } else {
+                    
                 
                     const newSpot = await dispatch(createNewSpot(spotData));
+                    console.log('NEWSPOT VAR .... ',newSpot)
+                    //
                     const newSpotId = newSpot.id;
                   
+
                     const displayPreview = images[0] ? 'true' : 'false';
                     const imgTest = images.map((url) => {
                         const payload = {
@@ -129,8 +136,10 @@ const NewSpot = () => {
                     navigate(`/spots/${newSpot.id}`);
                 }
             } catch (res) {
-                console.log(res.json())
+                console.log('TESSTT')
+              
                 const data = await res.json();
+                console.log('DATA', data)
                 if (data && data.errors) {
                     setErrors(data.errors);
                 }

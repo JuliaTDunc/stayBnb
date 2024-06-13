@@ -114,20 +114,24 @@ export const getSpotDetails = (spotId) => async(dispatch) => {
     }
 }
 export const createNewSpot = (payload) => async (dispatch) => {
-    const res = await csrfFetch('api/spots',{
+
+    console.log('PAYLOAD...', payload)
+    const res = await csrfFetch('/api/spots',{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
     });
     if(res.ok){
         const data = await res.json();
+        //
+        console.log('DATA VAR....', data)
         dispatch(newSpot(data));
         return data;
     }
 }
 export const createNewImage = (spotId, payload) => async(dispatch) => {
     const {url, displayPreview} = payload;
-    const res = await csrfFetch(`api/spots/${spotId}/images`, {
+    const res = await csrfFetch(`/api/spots/${spotId}/images`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({url, preview: displayPreview})
@@ -211,8 +215,34 @@ const spotReducer = (state= initialState, action) => {
         case LOAD_USERS_SPOTS: {
             const newState = {...state, currUser: {}};
             action.payload.Spots.forEach(spot => {
-                newState.currUser[spotId] =spot;
+                newState.currUser[spot.id] = spot;
             })
+            return newState;
+        }
+        case NEW_SPOT: {
+            const newState = { ...state, loadSpots: { ...state.loadSpots } };
+            newState.loadSpots[action.payload.id] = action.payload;
+            return newState;
+        }
+        case NEW_IMAGE: {
+            const { spotId, image } = action.payload;
+            const newState = { ...state, images: { ...state.images } };
+
+            if (!newState.images[spotId]) {
+                newState.images[spotId] = [];
+            }
+            newState.images[spotId].push(image);
+            if (image.previewImage) {
+                newState.loadSpots[spotId].previewImage = image.url;
+            }
+            return newState;
+        }
+        case NEW_REVIEW: {
+            const { review } = action.payload;
+            const newState = { ...state, reviews: { ...state.reviews } };
+            newState.reviews[review.id] = review;
+            newState.currSpot.avgStarRating = avgRatingMachine(newState.reviews);
+            newState.currSpot.numReviews += 1;
             return newState;
         }
         case UPDATE_SPOTS: {

@@ -3,6 +3,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useParams } from "react-router-dom";
 import {FaStar} from 'react-icons/fa';
 import {LuDot} from 'react-icons/lu';
+import { useModal } from "../../context/Modal";
+import ReviewModal from '../ReviewModal/ReviewModal';
 import {getSpotDetails,getReviews,selectReviewsArray} from '../../store/spots';
 import './SpotDetails.css'
 
@@ -13,6 +15,7 @@ const SpotsDetails = () => {
     const sessionUser = useSelector(state => state.session.user);
     const reviews = useSelector(selectReviewsArray);
     const [isLoaded, setIsLoaded] = useState(false);
+    const { setModalContent } = useModal(); //may be unneccessary
 
     useEffect(() => {
         dispatch(getSpotDetails(spotId))
@@ -79,7 +82,7 @@ const SpotsDetails = () => {
                 </div>
                 {  <div>
                     {sessionUser && !isOwner && !hasReviews ? (
-                        <p>Be the first to post a review!</p>
+                        <button onClick={()=> setModalContent(<ReviewModal/>)}>Be the first to post a review!</button>
                     ) : (
                         <div>
                             {reviews.map(review => {
