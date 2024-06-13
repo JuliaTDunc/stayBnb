@@ -2,105 +2,141 @@ import "./NewSpot.css";
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSpots, getSpotDetails, updateUserSpots, createNewSpot, createNewImage } from "../../store/spots"; // Import the appropriate action
-import { ValidationError } from "sequelize";
+import { getSpotDetails, updateUserSpots, createNewSpot, createNewImage } from "../../store/spots";
 
 const NewSpot = () => {
    
     const { spotId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const spotRefs = useRef({});
+    const spotRef = useRef({});
 
     const spot = useSelector((state) => state.spots.currSpot);
 
-    const [formData, setFormData] = useState({
-        address: '',
-        city: '',
-        state: '',
-        country: '',
-        name: '',
-        description: '',
-        price: '',
-        previewImage: '',
-        secondImg: '',
-        thirdImg: '',
-        fourthImg: '',
-        fifthImg: '',
-    });
+
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [state, setState] = useState("");
+    const [country, setCountry] = useState("");
+    const [description, setDescription] = useState("");
+    const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
+    const [previewImage, setPreviewImage] = useState("");
+    const [secondImg, setSecondImg] = useState("");
+    const [thirdImg, setThirdImg] = useState("");
+    const [fourthImg, setFourthImg] = useState("");
+    const [fifthImg, setFifthImg] = useState("");
     const [errors,setErrors] = useState({});
+
+    const validationErrors = () => {
+        const newErr = {};
+        if (!country) newErr.country = 'Country is required';
+        if (!address) newErr.address = 'Address is required';
+        if (!city) newErr.city = 'City is required';
+        if (!state) newErr.state = 'State is required';
+        if (description.length < 30) newErr.description = 'Description needs 30 or more characters';
+        if (description.length > 255) newErr.description = 'Description must be 255 characters or less';
+        if (!name) newErr.name = 'Name is required';
+        if (name.length > 50) newErr.name = 'Name must be less than 50 characters';
+        if (!price) newErr.price = 'Price per night is required';
+        if (price < 0) newErr.price = 'Price per day must be a positive number';
+        if (!spotId && !previewImage) newErr.previewImage = 'A preview image URL is required';
+        return newErr;
+    }
 
     useEffect(() => {
         if (spotId) {
-            dispatch(getSpotDetails(spotId)); // Fetch spot details if spotId exists
+            dispatch(getSpotDetails(spotId));
         }
     }, [dispatch, spotId]);
 
     useEffect(() => {
         if (spot && spotId) {
-            setFormData((prevData)=> ({
-                ...prevData,
-                address: spot.address|| '',
-                city: spot.city|| '',
-                state: spot.state|| '',
-                country: spot.country|| '',
-                name: spot.name|| '',
-                description: spot.description|| '',
-                price: spot.price|| '',
-                previewImage: spot.previewImage|| '',
-            }));
+            setAddress(spot.address || "");
+            setCity(spot.city || "");
+            setState(spot.state || "");
+            setCountry(spot.country || "");
+            setDescription(spot.description || "");
+            setName(spot.name || "");
+            setPrice(spot.price || "");
+            setPreviewImage(spot.previewImage || "");
         }
     }, [spot, spotId]);
 
-    const handleChange = (field) => (e) => {
-        const {value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [field]: value
-        }))
+    const handleChange = (setField, field) => (e) => {
+        setField(e.target.value);
         if(errors[field]){
-            setErrors((prevErrors)=> {
-                const newErrors = {...prevErrors};
-                delete newErrors[field];
-                return newErrors;
+            setErrors((prevErr) => {
+                const newErr = {...prevErr};
+                delete newErr[field];
+                return newErr;
             })
         }
-    };
+        
+    }
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        const spotData = { ...formData, price: parseFloat(formData.price) };
-        try {
-            if (spotId) {
-                const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
-                navigate(`/spots/${updatedSpot.id}`)
-            } else {
-                const newSpot = await dispatch(createNewSpot(spotData));
-                const images = [
-                    previewImage,
-                    secondImg,
-                    thirdImg,
-                    fourthImg,
-                    fifthImg,
-                ];
-                const displayPreview = images[0] ? 'true' : 'false';
-                const imgTest = images.map((u) => {
-                    const payload = {
-                        u,
-                        displayPreview
-                    }
-                    return dispatch(createNewImage(newSpot.id, payload))
-                })
-                await Promise.all(imgTest, payload);
-                navigate(`/spots/${newSpot.id}`)
-            }
-        } catch (res) {
-            const data = await res.json();
-            if(data && data.errors){
-                setErrors(data.errors)
+        const formErrors = validationErrors();
+
+        const images = [previewImage, secondImg, thirdImg, fourthImg, fifthImg].filter(url => url);
+        const invalidPaths = images.filter(url => {
+            const extension = url.split('.').pop().toLowerCase();
+            return !['png', 'jpg', 'jpeg'].includes(extension);
+        });
+        if (invalidPaths.length > 0) {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                previewImage: 'Image URL needs to end in png, jpg or jpeg'
+            }))
+            return;
+        }
+
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            const firstErrorField = Object.keys(formErrors)[0];
+            spotRef.current[firstErrorField].scrollIntoView({ behavior: 'smooth' });
+        } else {
+            const spotData = {
+                country,
+                address,
+                city,
+                state,
+                description,
+                name,
+                price: parseFloat(price)
+            };
+            try {
+                if (spotId) {
+                   
+                    const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
+                   
+                    navigate(`/spots/${updatedSpot.id}`);
+                } else {
+                
+                    const newSpot = await dispatch(createNewSpot(spotData));
+                    const newSpotId = newSpot.id;
+                  
+                    const displayPreview = images[0] ? 'true' : 'false';
+                    const imgTest = images.map((url) => {
+                        const payload = {
+                            url,
+                            displayPreview
+                        }
+                        return dispatch(createNewImage(newSpotId, payload))
+                    })
+                    await Promise.all(imgTest);
+                    navigate(`/spots/${newSpot.id}`);
+                }
+            } catch (res) {
+                console.log(res.json())
+                const data = await res.json();
+                if (data && data.errors) {
+                    setErrors(data.errors);
+                }
             }
         }
-    };
+    }
 
     return (
         <div className='new-form'>
@@ -111,34 +147,38 @@ const NewSpot = () => {
                     <h5 className="form-header">Guests will only get your exact address once they booked a<br />reservation.</h5>
                     <input
                         type="text"
-                        value={formData.address}
+                        value={address}
                         name='address'
                         placeholder="Street Address"
-                        onChange={handleChange}
+                        onChange={handleChange(setAddress, 'address')}
+                        ref={(e) => spotRef.current.address = e}
                         required
                     />
                     <input
                         type="text"
-                        value={formData.city}
+                        value={city}
                         name='city'
                         placeholder="City"
-                        onChange={handleChange}
+                        onChange={handleChange(setCity, 'city')}
+                        ref={(e) => spotRef.current.city = e}
                         required
                     />
                     <input
                         type="text"
-                        value={formData.state}
+                        value={state}
                         name='state'
                         placeholder="State"
-                        onChange={handleChange}
+                        onChange={handleChange(setState, 'state')}
+                        ref={(e) => spotRef.current.state = e}
                         required
                     />
                     <input
                         type="text"
-                        value={formData.country}
+                        value={country}
                         name='country'
                         placeholder="Country"
-                        onChange={handleChange}
+                        onChange={handleChange(setCountry, 'country')}
+                        ref={(e) => spotRef.current.country = e}
                         required
                     />
                 </section>
@@ -147,9 +187,10 @@ const NewSpot = () => {
                     <p>Mention the best features of your space, any special amenities like fast wifi or parking, and what you love about the neighborhood.</p>
                     <textarea
                         name='description'
-                        value={formData.description}
+                        value={description}
                         placeholder="Please write at least 30 characters."
-                        onChange={handleChange}
+                        onChange={handleChange(setDescription,'description')}
+                        ref={(e) => spotRef.current.description = e}
                         required
                     />
                 </section>
@@ -158,10 +199,11 @@ const NewSpot = () => {
                     <p>Catch guests' attention with a spot title that highlights what makes your place special.</p>
                     <input
                         type="text"
-                        value={formData.name}
+                        value={name}
                         name='name'
                         placeholder="Title"
-                        onChange={handleChange}
+                        onChange={handleChange(setName, 'name')}
+                        ref={(e) => spotRef.current.name = e}
                         required
                     />
                 </section>
@@ -170,10 +212,11 @@ const NewSpot = () => {
                     <p>Competitive pricing can help your listing stand out and rank higher in search results.</p>
                     <input
                         type="number"
-                        value={formData.price}
+                        value={price}
                         name="price"
                         placeholder="Price per night (USD)"
-                        onChange={handleChange}
+                        onChange={handleChange(setPrice, 'price')}
+                        ref={(e) => spotRef.current.price = e}
                         required
                     />
                 </section>
@@ -185,14 +228,19 @@ const NewSpot = () => {
                             type="text"
                             placeholder="Preview Image URL"
                             name='previewImage'
-                            value={formData.previewImage}
-                            onChange={handleChange}
+                            value={previewImage}
+                            onChange={handleChange(setPreviewImage, 'previewImage')}
+                            ref={(e) => spotRef.current.previewImage = e}
                             required
                         />
-                        <input type="text" placeholder="Image URL" />
-                        <input type="text" placeholder="Image URL" />
-                        <input type="text" placeholder="Image URL" />
-                        <input type="text" placeholder="Image URL" />
+                        <input type="text" className='extra-img' placeholder="Image URL"
+                            onChange={(e) => setSecondImg(e.target.value)} />
+                        <input type="text" className='extra-img' placeholder="Image URL" 
+                            onChange={(e) => setThirdImg(e.target.value)}/>
+                        <input type="text" className='extra-img' placeholder="Image URL"
+                            onChange={(e) => setFourthImg(e.target.value)}/>
+                        <input type="text" className='extra-img' placeholder="Image URL"
+                            onChange={(e) => setFifthImg(e.target.value)} />
                     </label>
                 </section>
                 <button type='submit'>{spotId ? 'Update Spot' : 'Create Spot'}</button>
