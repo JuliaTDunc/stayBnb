@@ -93,7 +93,7 @@ export const getSpots = () => async(dispatch) => {
     }
 }
 export const getUserSpots = () => async(dispatch) => {
-    const res = await csrfFetch('api/spots/current');
+    const res = await csrfFetch('/api/spots/current');
     if(res.ok){
         const data = await res.json();
         dispatch(loadUsersSpots(data))
@@ -115,7 +115,6 @@ export const getSpotDetails = (spotId) => async(dispatch) => {
 }
 export const createNewSpot = (payload) => async (dispatch) => {
 
-    console.log('PAYLOAD...', payload)
     const res = await csrfFetch('/api/spots',{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -123,8 +122,8 @@ export const createNewSpot = (payload) => async (dispatch) => {
     });
     if(res.ok){
         const data = await res.json();
-        //
-        console.log('DATA VAR....', data)
+        
+  console.log('ERROR OCCURRING HERE>>>>', data)
         dispatch(newSpot(data));
         return data;
     }
@@ -181,7 +180,15 @@ const avgRatingMachine = (reviews) => {
     const numReviews = Object.values(reviews).length;
     return totalStars/numReviews;
 }
+export const deleteSingleSpot = (spotId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/spots/${spotId}`, {
+        method: 'DELETE'
+    })
 
+    if (response.ok) {
+        dispatch(deleteSpot(spotId))
+    }
+};
 
 
 
@@ -259,7 +266,7 @@ const spotReducer = (state= initialState, action) => {
         }
         case DELETE_SPOT: {
             const spotId = action.payload;
-            const newState = {...state, reviews: {...state.reviews}, currSpot: {...state.currSpot}};
+            const newState = {...state, loadSpots: {...state.loadSpots}, currUser: {...state.currUser}};
             delete newState.loadSpots[spotId];
             delete newState.currUser[spotId];
             return newState;

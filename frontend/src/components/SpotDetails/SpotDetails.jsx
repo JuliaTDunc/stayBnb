@@ -15,7 +15,7 @@ const SpotsDetails = () => {
     const sessionUser = useSelector(state => state.session.user);
     const reviews = useSelector(selectReviewsArray);
     const [isLoaded, setIsLoaded] = useState(false);
-    const { setModalContent } = useModal(); //may be unneccessary
+    const { setModalContent } = useModal()
 
     useEffect(() => {
         dispatch(getSpotDetails(spotId))
@@ -82,7 +82,7 @@ const SpotsDetails = () => {
                 </div>
                 {  <div>
                     {sessionUser && !isOwner && !hasReviews ? (
-                        <button onClick={()=> setModalContent(<ReviewModal/>)}>Be the first to post a review!</button>
+                        <button onClick={()=> setModalContent(<ReviewModal spotId={spotId}/>)}>Be the first to post a review!</button>
                     ) : (
                         <div>
                             {reviews.map(review => {

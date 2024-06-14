@@ -7,18 +7,23 @@ import './ReviewModal.css'
 
 const ReviewModal = ({spotId}) => {
     const[review,setReview] = useState('');
-    const [stars,setStars] = useState('');
-    const [errors, setErrors] = useState('');
+    const [stars,setStars] = useState(null);
+    const [hoverStars, setHoverStars] = useState(null);
+    const [errors, setErrors] = useState({});
     const [disableButton, setDisableButton] = useState(true);
 
     const dispatch= useDispatch();
     const {closeModal} = useModal();
 
+    useEffect(() => {
+        setDisableButton(review.length < 10 || stars === 0);
+    }, [review, stars]);
+
     useEffect(()=> {
         return () => {
             setReview('');
             setStars(null);
-            setErrors(null);
+            setErrors({});
             setDisableButton(true);
         }
     }, [closeModal])
@@ -57,6 +62,9 @@ const ReviewModal = ({spotId}) => {
                         return (
                             <FaStar
                             key={i}
+                                className={`star ${starRating <= (hoverStars || stars) ? 'filled' : ''}`}
+                                onMouseEnter={() => setHoverStars(starRating)}
+                                onMouseLeave={() => setHoverStars(stars)}
                             onClick={()=> setStars(starRating)}
                             />
                         )

@@ -8,8 +8,8 @@ import LoginFormModal from '../LoginFormModal/LoginFormModal';
 import SignupFormModal from "../SignupPage/SignupFormModal";
 import './ProfileButton.css';
 
-import { Navigate, useNavigate } from "react-router-dom";
-import ManageSpots from "../ManageSpots/ManageSpots";
+import {  useNavigate } from "react-router-dom";
+
 
 function ProfileButton({ user }) {
     const dispatch = useDispatch();

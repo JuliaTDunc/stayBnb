@@ -12,7 +12,7 @@ const NewSpot = () => {
     const spotRef = useRef({});
 
     const spot = useSelector((state) => state.spots.currSpot);
-
+  
 
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
@@ -77,6 +77,7 @@ const NewSpot = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+       
         const formErrors = validationErrors();
 
         const images = [previewImage, secondImg, thirdImg, fourthImg, fifthImg].filter(url => url);
@@ -85,6 +86,7 @@ const NewSpot = () => {
             return !['png', 'jpg', 'jpeg'].includes(extension);
         });
         if (invalidPaths.length > 0) {
+            console.log('CURRTEST2>>')
             setErrors(prevErrors => ({
                 ...prevErrors,
                 previewImage: 'Image URL needs to end in png, jpg or jpeg'
@@ -138,6 +140,7 @@ const NewSpot = () => {
             } catch (res) {
                 console.log('TESSTT')
               
+                console.log('RES>>>>', res)
                 const data = await res.json();
                 console.log('DATA', data)
                 if (data && data.errors) {

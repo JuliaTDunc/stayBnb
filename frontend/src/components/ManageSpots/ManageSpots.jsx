@@ -16,9 +16,8 @@ const ManageSpots = () => {
     /*
     CURRENTLY RETURNING: 
     {}[[Prototype]]: Object
-
-    */
-    //const sessionUser = useSelector(state => state.session)
+*/
+    
     /*
     CURRENTLY RETURNING (This is the desired response -- no need to edit):
     {user: {…}}
@@ -34,6 +33,7 @@ const ManageSpots = () => {
     */
 
     const usersSpots = Object.values(spots);
+    console.log('USER SPOTS>>>>', usersSpots)
 
     /*
     CURRENTLY RETURNING (This user should have one spot, and that spot is not returning):
