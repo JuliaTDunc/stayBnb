@@ -86,7 +86,7 @@ const NewSpot = () => {
             return !['png', 'jpg', 'jpeg'].includes(extension);
         });
         if (invalidPaths.length > 0) {
-            console.log('CURRTEST2>>')
+            
             setErrors(prevErrors => ({
                 ...prevErrors,
                 previewImage: 'Image URL needs to end in png, jpg or jpeg'
@@ -100,7 +100,6 @@ const NewSpot = () => {
             const firstErrorField = Object.keys(formErrors)[0];
             spotRef.current[firstErrorField].scrollIntoView({ behavior: 'smooth' });
         } else {
-            console.log('HERE?')
             const spotData = {
                 country,
                 address,
@@ -121,7 +120,7 @@ const NewSpot = () => {
                     
                 
                     const newSpot = await dispatch(createNewSpot(spotData));
-                    console.log('NEWSPOT VAR .... ',newSpot)
+                   
                     //
                     const newSpotId = newSpot.id;
                   
@@ -138,11 +137,11 @@ const NewSpot = () => {
                     navigate(`/spots/${newSpot.id}`);
                 }
             } catch (res) {
-                console.log('TESSTT')
+               
               
-                console.log('RES>>>>', res)
+               
                 const data = await res.json();
-                console.log('DATA', data)
+               
                 if (data && data.errors) {
                     setErrors(data.errors);
                 }

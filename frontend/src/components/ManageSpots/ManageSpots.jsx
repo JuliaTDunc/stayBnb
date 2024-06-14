@@ -11,7 +11,7 @@ import './ManageSpots.css';
 const ManageSpots = () => {
     const dispatch = useDispatch();
     const testOne = useSelector(state => state.spots)
-    console.log('TEST ONE>>>>',testOne);
+   
     const spots = useSelector(state => state.spots.currUser);
     /*
     CURRENTLY RETURNING: 
@@ -33,7 +33,7 @@ const ManageSpots = () => {
     */
 
     const usersSpots = Object.values(spots);
-    console.log('USER SPOTS>>>>', usersSpots)
+   
 
     /*
     CURRENTLY RETURNING (This user should have one spot, and that spot is not returning):
@@ -53,7 +53,7 @@ return (
     ): (<div className='usersSpots-div'>
                 {usersSpots
                     .map(spot => (
-                        <SpotsTile key={spot.id} spot={spot} />
+                        <SpotsTile key={spot.id} spot={spot} manage/>
                     ))}
         </div>
     )}   

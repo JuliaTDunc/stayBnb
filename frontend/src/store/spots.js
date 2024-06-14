@@ -123,7 +123,7 @@ export const createNewSpot = (payload) => async (dispatch) => {
     if(res.ok){
         const data = await res.json();
         
-  console.log('ERROR OCCURRING HERE>>>>', data)
+ 
         dispatch(newSpot(data));
         return data;
     }
