@@ -10,6 +10,7 @@ const SpotsTile = ({spot, manage}) => {
         <div>
         <Link key={spot.id} to={`/spots/${spot.id}`} title={spot.name}>
             <div className='spot-tile'>
+                <p className='spot-title'>{spot.name}</p>
                 <img src={spot.previewImage} alt={spot.name} className='spot-image'/>
                 <div className='spot-tile-details'>
                     <div>

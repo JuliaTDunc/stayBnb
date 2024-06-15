@@ -101,10 +101,10 @@ const NewSpot = () => {
             spotRef.current[firstErrorField].scrollIntoView({ behavior: 'smooth' });
         } else {
             const spotData = {
-                country,
                 address,
                 city,
                 state,
+                country,
                 description,
                 name,
                 price: parseFloat(price)
