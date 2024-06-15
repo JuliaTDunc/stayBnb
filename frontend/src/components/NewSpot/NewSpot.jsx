@@ -121,7 +121,7 @@ const NewSpot = () => {
                 
                     const newSpot = await dispatch(createNewSpot(spotData));
                    
-                    //
+                    
                     const newSpotId = newSpot.id;
                   
 
