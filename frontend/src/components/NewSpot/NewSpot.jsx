@@ -137,9 +137,6 @@ const NewSpot = () => {
                     navigate(`/spots/${newSpot.id}`);
                 }
             } catch (res) {
-               
-              
-               
                 const data = await res.json();
                
                 if (data && data.errors) {
@@ -218,6 +215,7 @@ const NewSpot = () => {
                         required
                     />
                 </section>
+                {errors.name && <p className='create-spot-error'>{errors.name}</p>}
                 <section>
                     <h4>Set a base price for your spot</h4>
                     <p>Competitive pricing can help your listing stand out and rank higher in search results.</p>
