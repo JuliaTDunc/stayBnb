@@ -54,7 +54,7 @@ const SpotsDetails = () => {
                             <p className="details-spot-rating"><FaStar /> {(spot.avgStarRating).toFixed(1)}</p>
                         ) : (<FaStar />)}
                     </div>
-                    {spot.numReviews ? (
+                    {spot.numReviews && isLoaded ? (
                         <p className="details-spot-rating"><LuDot />{spot.numReviews} {
                             spot.numReviews > 1 ? ('reviews') : ('review')
                         }</p>

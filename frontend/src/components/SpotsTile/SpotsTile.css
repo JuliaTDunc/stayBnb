@@ -17,7 +17,7 @@
 .spot-image{
     justify-self: center;
     align-self: center;
-    width: 150px;
-    height: 150px;
+    max-width: 150px;
+    max-height: 150px;
     margin: 10px;
 }
