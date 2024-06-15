@@ -19,7 +19,6 @@ const SpotsDetails = () => {
 
     useEffect(() => {
         dispatch(getSpotDetails(spotId))
-        .then(()=> setIsLoaded(true));
         dispatch(getReviews(spotId))
         .then(() => setIsLoaded(true));
     },[dispatch,spotId]);
