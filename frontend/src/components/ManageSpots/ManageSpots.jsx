@@ -10,7 +10,7 @@ import './ManageSpots.css';
 
 const ManageSpots = () => {
     const dispatch = useDispatch();
-    const testOne = useSelector(state => state.spots)
+    const [isLoaded, setIsLoaded] = useState(false);
    
     const spots = useSelector(state => state.spots.currUser);
     /*
@@ -41,11 +41,12 @@ const ManageSpots = () => {
 */
 
     useEffect(() => {
-        dispatch(getUserSpots());
+        dispatch(getUserSpots())
+        .then(()=> setIsLoaded(true));
     },[dispatch])
 
    
-return (
+return isLoaded ? (
     <div className = 'manage-spots-div'>
     <h3>Manage Spots</h3>
     {usersSpots.length === 0 ? (
@@ -58,6 +59,8 @@ return (
         </div>
     )}   
     </div>
+    ): (
+        <div>Loading...</div>
     )
 }
 export default ManageSpots;
