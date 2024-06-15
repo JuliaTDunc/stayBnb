@@ -5,7 +5,7 @@ import DeleteSpot from '../DeleteSpot/DeleteSpot';
 import './SpotsTile.css'
 
 const SpotsTile = ({spot, manage}) => {
-    price = spot.price ? parseFloat(spot.price) : 0;
+   
     const {setModalContent} = useModal();
     return (
         <div>
@@ -20,7 +20,7 @@ const SpotsTile = ({spot, manage}) => {
                             <p className='c-stars'><FaStar/>{(spot.avgRating.toFixed(1))}</p>
                         ): ('New!')}
                     </div>
-                    <p>{price.toFixed(2)} /night</p>
+                    <p>{spot.price} /night</p>
                 </div>
             </div>
         </Link>
