@@ -1,5 +1,6 @@
 //imports
 import { getUserSpots } from "../../store/spots";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SpotsTile from '../SpotsTile/SpotsTile';
 import { useEffect } from "react";
