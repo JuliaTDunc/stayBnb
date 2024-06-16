@@ -16,9 +16,11 @@ const SpotsTile = ({spot, manage}) => {
                 <div className='spot-tile-details'>
                     <div>
                         <p>{spot.city},{spot.state}</p>
+                        <div className='c-stars'>
                         {spot.avgRating ? (
-                            <p className='c-stars'><FaStar/>{(spot.avgRating.toFixed(1))}</p>
+                            <p><FaStar/>{(spot.avgRating.toFixed(1))}</p>
                         ): ('New!')}
+                            </div>
                     </div>
                     <p>{spot.price} /night</p>
                 </div>

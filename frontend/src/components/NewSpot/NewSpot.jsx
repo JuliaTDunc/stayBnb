@@ -115,12 +115,14 @@ const NewSpot = () => {
                    
                     const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
                    
+                   
                     navigate(`/spots/${updatedSpot.id}`);
+                
+
                 } else {
                     
                 
                     const newSpot = await dispatch(createNewSpot(spotData));
-                   
                     
                     const newSpotId = newSpot.id;
                   
