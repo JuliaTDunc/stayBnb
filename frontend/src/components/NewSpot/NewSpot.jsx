@@ -111,21 +111,17 @@ const NewSpot = () => {
             };
             try {
                 if (spotId) {
-                  
-                   
+
                     const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
-                   
-                   
+                  
                     navigate(`/spots/${updatedSpot.id}`);
                 
 
                 } else {
-                    
-                
-                    const newSpot = await dispatch(createNewSpot(spotData));
-                    
-                    const newSpotId = newSpot.id;
                   
+                    const newSpot = await dispatch(createNewSpot(spotData));
+           
+                    const newSpotId = newSpot.id;
 
                     const displayPreview = images[0] ? 'true' : 'false';
                     const imgTest = images.map((url) => {
@@ -139,11 +135,15 @@ const NewSpot = () => {
                     navigate(`/spots/${newSpot.id}`);
                 }
             } catch (res) {
+                if (res instanceof Response) {  
                 const data = await res.json();
                
                 if (data && data.errors) {
                     setErrors(data.errors);
                 }
+            }else {
+                console.log(typeof(res))
+            }
             }
         }
     }

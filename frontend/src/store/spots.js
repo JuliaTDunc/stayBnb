@@ -135,7 +135,7 @@ export const createNewImage = (spotId, payload) => async(dispatch) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({url, preview: displayPreview})
     })
-
+    console.log('RUBENS RES>>>', res)
     if(res.ok){
         const data = await res.json();
         dispatch(newImage(spotId, data));
@@ -233,6 +233,7 @@ const spotReducer = (state= initialState, action) => {
         }
         case NEW_IMAGE: {
             const { spotId, image } = action.payload;
+            console.log('IMAGE>>>>>', image)
             const newState = { ...state, images: { ...state.images } };
 
             if (!newState.images[spotId]) {
