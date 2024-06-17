@@ -133,7 +133,7 @@ export const createNewImage = (spotId, payload) => async(dispatch) => {
     const res = await csrfFetch(`/api/spots/${spotId}/images`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({url, previewImage: displayPreview})
+        body: JSON.stringify({url, preview: displayPreview})
     })
     console.log('RUBENS RES>>>', res)
     if(res.ok){
