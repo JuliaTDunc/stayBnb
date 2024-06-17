@@ -122,7 +122,7 @@ const NewSpot = () => {
                     spotId = newSpot.id
                 }
 
-                    console.log('IMAGE ARRAY>>>>' , images)
+            
                     const imgTest = images.map((image, index) => {
                         const payload = {
                             url: image,
@@ -140,7 +140,7 @@ const NewSpot = () => {
                     setErrors(data.errors);
                 }
             }else {
-                console.log('res not type of response...', res)
+                console.log('error creating images...')
             }
             }
         }
