@@ -49,7 +49,7 @@ const ManageSpots = () => {
    
 return isLoaded ? (
     <div className = 'manage-spots-div'>
-    <h3>Manage Spots</h3>
+    <p className='manage-title'>Manage Spots</p>
     {usersSpots.length === 0 ? (
         <button className='new-user-create-spot'><Link to={'/spots/new'}>Create a New Spot</Link></button>
     ): (<div className='usersSpots-div'>

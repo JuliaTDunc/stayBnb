@@ -1,5 +1,4 @@
 .nav-bar{
-    border:1px solid blue; 
     border-bottom: 1.5px solid lightgray;
     display: flex;
     align-items: center;
@@ -13,12 +12,10 @@
 .new-spot-link{
     height: auto;
     width:fit-content;
-    border:1px solid red;
     text-decoration: none;
     color: darkslategray;
 }
 .logo{
-    border: 1px solid green;
     width:50%;
     height:auto;
     margin-left: -30%;

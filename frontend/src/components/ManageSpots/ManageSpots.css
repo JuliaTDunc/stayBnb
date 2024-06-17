@@ -1,0 +1,13 @@
+.manage-spots-div{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.manage-title{
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+}
+.new-user-create-spot{
+    color: black;
+    width: 200px;
+
+}
