@@ -142,7 +142,7 @@ const NewSpot = () => {
                     setErrors(data.errors);
                 }
             }else {
-                console.log(typeof(res))
+                console.log('res not type of response...', res)
             }
             }
         }

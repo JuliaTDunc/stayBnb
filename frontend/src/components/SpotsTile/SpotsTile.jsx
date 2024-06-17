@@ -15,7 +15,7 @@ const SpotsTile = ({spot, manage}) => {
                 <img src={spot.previewImage} alt={spot.name} className='spot-image'/>
                 <div className='spot-tile-details'>
                     <div>
-                        <p>{spot.city},{spot.state}</p>
+                        <p className="city-state-tile">{spot.city},{spot.state}</p>
                         <div className='c-stars'>
                         {spot.avgRating ? (
                             <p><FaStar/>{(spot.avgRating.toFixed(1))}</p>

@@ -1,23 +1,32 @@
 .spot-tile{
-    border: 1px solid orange;
+    margin: 10px;
+    overflow: hidden;
+    width: 300px;
     color:black;
-    background-color: rgb(253, 253, 253);
+    background-color: rgb(244, 244, 244);
+   
 }
 .spot-title{
-    font-size: large;
+    text-align: center;
+  
+    
+}
+a{
+    text-decoration: none;
 }
 .spot-tile-details{
-    border: 1px solid green;
+  
+    padding: 10px;
+    width: auto;
 }
+
 .c-stars{
-    border: 1px solid blue;
-    text-align: right;
+    height: 20px;
+   
     
 }
 .spot-image{
-    justify-self: center;
-    align-self: center;
-    max-width: 150px;
-    max-height: 150px;
-    margin: 10px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
 }
