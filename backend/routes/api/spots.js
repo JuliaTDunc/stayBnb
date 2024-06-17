@@ -92,6 +92,7 @@ router.post("/", requireAuth, validateSpot, async (req, res) => {
 router.post('/:spotId/images', requireAuth, existingSpot, isSpotOwner, async (req, res) => {
     req.body.previewImage = req.body.preview
     const data = {...req.body,spotId: req.params.spotId}
+    delete data.preview
     const image = await SpotImage.create(data)
     delete image.createdAt
     delete image.updatedAt

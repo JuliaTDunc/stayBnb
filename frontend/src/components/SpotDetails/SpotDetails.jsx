@@ -16,7 +16,9 @@ const SpotsDetails = () => {
     const reviews = useSelector(selectReviewsArray);
     const [isLoaded, setIsLoaded] = useState(false);
     const { setModalContent } = useModal()
-
+    const cats = useSelector(state=> state)
+        console.log('SPOT DETAILS LINE 20>>>>>', spot)
+        console.log('CATS>>>>', cats)
     useEffect(() => {
         dispatch(getSpotDetails(spotId))
         dispatch(getReviews(spotId))

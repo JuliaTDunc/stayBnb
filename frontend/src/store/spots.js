@@ -38,13 +38,10 @@ const newSpot = (spot) => {
         payload: spot
     }
 };
-const newImage = (spotId, img) => {
+const newImage = (img) => {
     return {
         type: NEW_IMAGE,
-        payload: {
-            spotId,
-            img
-        }
+        payload: img
     }
 };
 
@@ -129,18 +126,19 @@ export const createNewSpot = (payload) => async (dispatch) => {
     }
 }
 export const createNewImage = (spotId, payload) => async(dispatch) => {
-    const {url, displayPreview} = payload;
+    //const {url, preview} = payload;
     const res = await csrfFetch(`/api/spots/${spotId}/images`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({url, preview: displayPreview})
+        body: JSON.stringify(payload)
     })
     console.log('RUBENS RES>>>', res)
     if(res.ok){
         const data = await res.json();
+        console.log('RUBENS RES DATA>>>', data)
         dispatch(newImage(spotId, data));
-        return data;
     }
+    return res;
 };
 
 export const createNewReview = (spotId, payload) => async(dispatch) => {
@@ -164,8 +162,8 @@ export const updateUserSpots = (spotId, payload) => async(dispatch) => {
     if(res.ok){
         const data = await res.json();
         dispatch(updateSpots(data))
-        return data;
     }
+    return res;
 };
 export const deleteSingleReview = (reviewId) => async(dispatch) => {
     const res = await csrfFetch(`/api/reviews/${reviewId}`, {
@@ -232,17 +230,17 @@ const spotReducer = (state= initialState, action) => {
             return newState;
         }
         case NEW_IMAGE: {
-            const { spotId, image } = action.payload;
+            const image = action.payload;
             console.log('IMAGE>>>>>', image)
             const newState = { ...state, images: { ...state.images } };
 
-            if (!newState.images[spotId]) {
-                newState.images[spotId] = [];
+            if (!newState.images[image.spotId]) {
+                newState.images[image.spotId] = [];
             }
-            newState.images[spotId].push(image);
-            if (image.previewImage) {
-                newState.loadSpots[spotId].previewImage = image.url;
-            }
+            newState.images[image.spotId].push(image);
+            /*if (image.previewImage) {
+                newState.loadSpots[image.spotId].previewImage = image.url;
+            }*/
             return newState;
         }
         case NEW_REVIEW: {

@@ -21,7 +21,7 @@ const NewSpot = () => {
     const [description, setDescription] = useState("");
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
-    const [previewImage, setPreviewImage] = useState("");
+    const [previewImageUrl, setPreviewImageUrl] = useState("");
     const [secondImg, setSecondImg] = useState("");
     const [thirdImg, setThirdImg] = useState("");
     const [fourthImg, setFourthImg] = useState("");
@@ -59,7 +59,7 @@ const NewSpot = () => {
             setDescription(spot.description || "");
             setName(spot.name || "");
             setPrice(spot.price || "");
-            setPreviewImage(spot.previewImage || "");
+            setPreviewImageUrl(spot.previewImageUrl || "");
         }
     }, [spot, spotId]);
 
@@ -80,7 +80,7 @@ const NewSpot = () => {
        
         const formErrors = validationErrors();
 
-        const images = [previewImage, secondImg, thirdImg, fourthImg, fifthImg].filter(url => url);
+        const images = [previewImageUrl, secondImg, thirdImg, fourthImg, fifthImg].filter(url => url);
         const invalidPaths = images.filter(url => {
             const extension = url.split('.').pop().toLowerCase();
             return !['png', 'jpg', 'jpeg'].includes(extension);
@@ -89,7 +89,7 @@ const NewSpot = () => {
             
             setErrors(prevErrors => ({
                 ...prevErrors,
-                previewImage: 'Image URL needs to end in png, jpg or jpeg'
+                previewImageUrl: 'Image URL needs to end in png, jpg or jpeg'
             }))
             return;
         }
@@ -111,29 +111,27 @@ const NewSpot = () => {
             };
             try {
                 if (spotId) {
-
-                    const updatedSpot = await dispatch(updateUserSpots(spotId, spotData));
+                 await dispatch(updateUserSpots(spotId, spotData));
                   
-                    navigate(`/spots/${updatedSpot.id}`);
-                
+        
 
                 } else {
                   
                     const newSpot = await dispatch(createNewSpot(spotData));
            
-                    const newSpotId = newSpot.id;
+                    spotId = newSpot.id
+                }
 
-                    const displayPreview = images[0] ? 'true' : 'false';
-                    const imgTest = images.map((url) => {
+                    console.log('IMAGE ARRAY>>>>' , images)
+                    const imgTest = images.map((image, index) => {
                         const payload = {
-                            url,
-                            displayPreview
+                            url: image,
+                            preview: index === 0
                         }
-                        return dispatch(createNewImage(newSpotId, payload))
+                        return dispatch(createNewImage(spotId, payload))
                     })
                     await Promise.all(imgTest);
-                    navigate(`/spots/${newSpot.id}`);
-                }
+                    navigate(`/spots/${spot.id}`);
             } catch (res) {
                 if (res instanceof Response) {  
                 const data = await res.json();
@@ -239,8 +237,8 @@ const NewSpot = () => {
                             type="text"
                             placeholder="Preview Image URL"
                             name='previewImage'
-                            value={previewImage}
-                            onChange={handleChange(setPreviewImage, 'previewImage')}
+                            value={previewImageUrl}
+                            onChange={handleChange(setPreviewImageUrl, 'previewImage')}
                             ref={(e) => spotRef.current.previewImage = e}
                             required
                         />
