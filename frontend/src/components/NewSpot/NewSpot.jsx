@@ -6,7 +6,7 @@ import { getSpotDetails, updateUserSpots, createNewSpot, createNewImage } from "
 
 const NewSpot = () => {
    
-    const { spotId } = useParams();
+    let { spotId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const spotRef = useRef({});
