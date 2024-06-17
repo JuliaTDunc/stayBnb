@@ -40,7 +40,7 @@ const NewSpot = () => {
         if (name.length > 50) newErr.name = 'Name must be less than 50 characters';
         if (!price) newErr.price = 'Price per night is required';
         if (price < 0) newErr.price = 'Price per day must be a positive number';
-        if (!spotId && !previewImage) newErr.previewImage = 'A preview image URL is required';
+        if (!spotId && !previewImageUrl) newErr.previewImageUrl = 'A preview image URL is required';
         return newErr;
     }
 
