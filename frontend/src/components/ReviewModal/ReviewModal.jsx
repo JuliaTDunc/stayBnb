@@ -71,7 +71,7 @@ const ReviewModal = ({spotId}) => {
                     })}
                     <p className='star-text'>Stars</p>
                 </div>
-                <button type='submit' disabled={disableButton} className='review-modal-button'>Submit</button>
+                <button type='submit' disabled={disableButton} className='review-modal-button'>Submit Your Review</button>
             </form>
         </div>
     )
