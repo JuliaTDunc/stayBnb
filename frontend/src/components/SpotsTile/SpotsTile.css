@@ -30,3 +30,6 @@ a{
     height: 150px;
     object-fit: cover;
 }
+.manage-spots{
+    text-align: center;
+}

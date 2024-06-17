@@ -131,7 +131,7 @@ const NewSpot = () => {
                         return dispatch(createNewImage(spotId, payload))
                     })
                     await Promise.all(imgTest);
-                    navigate(`/spots/${spot.id}`);
+                    navigate(`/spots/${spotId}`);
             } catch (res) {
                 if (res instanceof Response) {  
                 const data = await res.json();
@@ -140,7 +140,7 @@ const NewSpot = () => {
                     setErrors(data.errors);
                 }
             }else {
-                console.log('error creating images...')
+                console.log('res not type of response...', res)
             }
             }
         }
