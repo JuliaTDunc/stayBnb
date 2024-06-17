@@ -5,6 +5,7 @@ import {FaStar} from 'react-icons/fa';
 import {LuDot} from 'react-icons/lu';
 import { useModal } from "../../context/Modal";
 import ReviewModal from '../ReviewModal/ReviewModal';
+import DeleteReview from "../DeleteReview/DeleteReview";
 import {getSpotDetails,getReviews,selectReviewsArray} from '../../store/spots';
 import './SpotDetails.css'
 
@@ -15,15 +16,21 @@ const SpotsDetails = () => {
     const sessionUser = useSelector(state => state.session.user);
     const reviews = useSelector(selectReviewsArray);
     const [isLoaded, setIsLoaded] = useState(false);
-    const { setModalContent } = useModal()
-    const cats = useSelector(state=> state)
-
+    const [userHasReviewed, setUserHasReviewed] = useState(false);
+    const { setModalContent } = useModal();
 
     useEffect(() => {
         dispatch(getSpotDetails(spotId))
+        .then(() => {
         dispatch(getReviews(spotId))
         .then(() => setIsLoaded(true));
+        });
     },[dispatch,spotId]);
+    useEffect(()=> {
+        if(sessionUser && reviews){
+            setUserHasReviewed(reviews.some(review => review.userId === sessionUser.id))
+        }
+    }, [sessionUser, reviews])
 
     const handleReserve = () => {
         return alert('Feature Coming Soon...')
@@ -31,6 +38,11 @@ const SpotsDetails = () => {
    
     const isOwner = sessionUser && spot && sessionUser.id === spot.ownerId;
     const hasReviews = reviews.length > 0;
+    const sortedReviews = [...reviews].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+   
+    const handleImageError = (e) => {
+        e.target.src = '/sorry-image-not-available.jpg';
+    }
 
     return isLoaded ? (
         <div className ='full-spot'>
@@ -77,31 +89,42 @@ const SpotsDetails = () => {
                                 spot.numReviews > 1 ? ('reviews') : ('review')
                             }</p>
                         ) : (
-                            <p className="details-spot-rating">New!</p>
+                            spot.avgStarRating === null && <p className="details-spot-rating">New!</p>
                         )}
                     </div>
                 </div>
-                {  <div>
+                <div>
+                    {sessionUser && !isOwner && !userHasReviewed && (
+                    <button className='details-review-button' onClick={() => setModalContent(<ReviewModal spotId={spotId} />)}>
+                        Post Your Review
+                    </button>
+                )}
                     {sessionUser && !isOwner && !hasReviews ? (
-                        <button onClick={()=> setModalContent(<ReviewModal spotId={spotId}/>)}>Be the first to post a review!</button>
+                        <p>Be the first to post a review!</p>
                     ) : (
                         <div>
                             {reviews.map(review => {
-                                // convert to month/year format
                                 const reviewDate = new Date(review.createdAt);
                                 const options = { year: 'numeric', month: 'long' };
                                 const formattedDate = reviewDate.toLocaleDateString(undefined, options);
                                 return (
                                     <div key={review.id}>
-                                        <p>{review.User.firstName}</p>
-                                        <p>{formattedDate}</p>
-                                        <p>{review.review}</p>
+                                        <div>
+                                            <p>{review.User ? review.User.firstName : (sessionUser && sessionUser.firstName)}</p>
+                                            <p>{formattedDate}</p>
+                                            <p>{review.review}</p>
+                                            {sessionUser && review.userId === sessionUser.id && (
+                                               <button className='details-review-button' onClick={() => setModalContent(<DeleteReview reviewId={review.id} />)}>
+                                                 Delete
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 )
                             })}
                         </div>
                     )}
-                </div>}
+                </div>
             </div>
         </div>
     ) : (
