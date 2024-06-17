@@ -46,11 +46,11 @@ const SpotsDetails = () => {
 
     return isLoaded ? (
         <div className ='full-spot'>
-            <h2>{spot.name}</h2>
-            <h3>{spot.city}, {spot.state}, {spot.country}</h3>
+            <h3 className="spot-title-det">{spot.name}</h3>
+            <h4>{spot.city}, {spot.state}, {spot.country}</h4>
             <div className='image-det-container'>
-                <img src={spot.SpotImages[0].url} className='first-img-det' />
-                <div>
+                <img src={spot.SpotImages[0].url} className='first-img-det' onError={handleImageError} />
+                <div className="sec-img-div">
                     {spot.SpotImages.slice(1).map(image => (
                         <img key={image.id} src={image.url} className='second-img-det' />
                     ))}
@@ -58,16 +58,17 @@ const SpotsDetails = () => {
             </div>
             <div className='details-container'>
                 <div>
-                    <h2>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h2>
+                    <h3>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h3>
                     <p>{spot.description}</p>
                 </div>
                 <div className='details-price-reviews'>
-                    <h2>${spot.price} /night</h2>
+                    <h4>${spot.price} /night</h4>
                     <div>
                         {spot.avgStarRating ? (
                             <p className="details-spot-rating"><FaStar /> {(spot.avgStarRating).toFixed(1)}</p>
                         ) : (<FaStar />)}
                     </div>
+                   
                     {spot.numReviews && isLoaded ? (
                         <p className="details-spot-rating"><LuDot />{spot.numReviews} {
                             spot.numReviews > 1 ? ('reviews') : ('review')
@@ -127,6 +128,7 @@ const SpotsDetails = () => {
                 </div>
             </div>
         </div>
+       
     ) : (
         <div>Loading...</div>
     )

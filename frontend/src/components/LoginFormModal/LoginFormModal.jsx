@@ -24,7 +24,7 @@ function LoginFormModal() {
         }
     }
     useEffect(() => {
-        setDisableLoginButton(credential.length >= 4 && password.length >= 6);
+        setDisableLoginButton(credential.length <= 4 && password.length <= 6);
     }, [credential, password])
 
     const handleSubmit = async (e) => {
