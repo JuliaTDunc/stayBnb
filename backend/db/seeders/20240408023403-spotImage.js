@@ -14,7 +14,7 @@ module.exports = {
       await SpotImage.bulkCreate([
         {
           spotId: 1,
-          url: 'https://www.creativefabrica.com/wp-content/uploads/2022/09/27/Wes-Anderson-Garden-Architecture-39397614-1.pngefirstspot.com',
+          url: 'https://www.creativefabrica.com/wp-content/uploads/2022/09/27/Wes-Anderson-Garden-Architecture-39397614-1.png',
           previewImage: true
         },
         {
