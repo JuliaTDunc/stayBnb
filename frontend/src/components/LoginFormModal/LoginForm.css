@@ -28,7 +28,6 @@ input {
     color: red;
     margin-top: 10px;
 }
-
 button[type='submit'] {
     background-color: white;
     color: grey;
