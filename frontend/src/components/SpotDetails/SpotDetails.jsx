@@ -58,7 +58,7 @@ const SpotsDetails = () => {
             </div>
             <div className='details-container'>
                 <div>
-                    <h3>Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h3>
+                    <h3 className="host-name">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h3>
                     <p>{spot.description}</p>
                 </div>
                 <div className='details-price-reviews'>
@@ -76,7 +76,7 @@ const SpotsDetails = () => {
                     ) : (
                         <p className="new-rating">New!</p>
                     )}
-                    <button onClick={handleReserve}>Reserve</button>
+                    <button className='reserve-button' onClick={handleReserve}>Reserve</button>
                 </div>
             </div>
             <div>
@@ -104,7 +104,7 @@ const SpotsDetails = () => {
                         <p>Be the first to post a review!</p>
                     ) : (
                         <div>
-                            {reviews.map(review => {
+                            {sortedReviews.map(review => {
                                 const reviewDate = new Date(review.createdAt);
                                 const options = { year: 'numeric', month: 'long' };
                                 const formattedDate = reviewDate.toLocaleDateString(undefined, options);
