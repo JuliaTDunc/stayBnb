@@ -14,7 +14,7 @@ module.exports = {
       await SpotImage.bulkCreate([
         {
           spotId: 1,
-          url: 'https://www.creativefabrica.com/wp-content/uploads/2022/09/27/Wes-Anderson-Garden-Architecture-39397614-1.png',
+          url: '/images/WesAndersonGardenArchitecture.png',
           previewImage: true
         },
         {
@@ -24,7 +24,7 @@ module.exports = {
         },
         {
           spotId: 3,
-          url: 'https://mir-s3-cdn-cf.behance.net/projects/404/798c04193743989.Y3JvcCwxNDAwLDEwOTUsMCwyMA.png',
+          url: '/images/BrownHouse.png',
           previewImage: true
         },
       ], { validate: true, returning: false });
