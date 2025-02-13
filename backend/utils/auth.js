@@ -1,12 +1,37 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User } = require('../db/models');
+const { User, Spot, Booking, Review, ReviewImage, spotImage } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
+const setTokenCookie = (res, user) => {
+
+    const safeUser = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+    };
+    const token = jwt.sign(
+        { data: safeUser },
+        secret,
+        { expiresIn: parseInt(expiresIn) }//1 week
+    );
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+   
+    res.cookie('token', token, {
+        maxAge: expiresIn * 1000, 
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction && "Lax"
+    });
+
+    return token;
+};
 
 const restoreUser = (req, res, next) => {
-    // token parsed from cookies
+
     const { token } = req.cookies;
     req.user = null;
 
@@ -68,5 +93,7 @@ const requireAuth = function (req, _res, next) {
     err.errors = { message: 'Authentication required' };
     err.status = 401;
     return next(err);
-}
+    }
+};
+
 module.exports = { setTokenCookie, restoreUser, requireAuth };

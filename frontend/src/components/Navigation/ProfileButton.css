@@ -1,0 +1,44 @@
+.profile-button {
+    background: none;
+    border: 1px solid black;
+    border-radius: 40%;
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+}
+.log-out-button{
+    cursor: pointer;
+    background-color: rgb(227, 119, 119);
+    border-radius: 40%;
+}
+.profile-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    width: 200px;
+    /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color:darkslategray;
+}
+
+.profile-dropdown.hidden {
+    display: none;
+}
+.manage-menu-button{
+    background-color: white;
+    border:none;
+    cursor: pointer;
+    color: darkslategray;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+
+}
