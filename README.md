@@ -1,4 +1,7 @@
-# `AirBnb`
+# `stayBnb`
+
+[![Watch the demo](https://img.youtube.com/vi/8iz3-btvwSM/maxresdefault.jpg)](https://www.youtube.com/watch?v=8iz3-btvwSM)
+
 
 ## Database Schema Design
 
